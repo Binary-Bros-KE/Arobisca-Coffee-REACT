@@ -27,23 +27,29 @@ export default function EmailVerificationModal({ isOpen, userEmail }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const verificationCode = code.join("")
-    if (verificationCode.length !== 6) {
-      toast.error("Please enter all 6 digits")
+    if (verificationCode.length !== 4) {
+      toast.error("Please enter all 4 digits")
       return
     }
 
     const result = await dispatch(verifyEmailCode({ email: userEmail, verificationCode }))
-    if (!result.payload) {
+    if (result.meta.requestStatus === "fulfilled") {
       toast.success("Email verified successfully!")
       setCode(["", "", "", ""])
+    } else {
+      const errorMessage = result.payload;
+      toast.error(errorMessage);
     }
   }
 
   const handleResend = async () => {
     const result = await dispatch(requestEmailVerificationCode(userEmail))
-    if (!result.payload) {
+    if (result.meta.requestStatus === "fulfilled") {
       toast.success("Verification code sent to your email"),
-      setResendTimer(60)
+        setResendTimer(60)
+    }else {
+      const errorMessage = result.payload || "Login failed";
+      toast.error(errorMessage);
     }
   }
 
@@ -70,14 +76,14 @@ export default function EmailVerificationModal({ isOpen, userEmail }) {
         </div>
 
         <p className="text-gray-600 mb-6">
-          We sent a 6-digit code to <span className="font-semibold">{userEmail}</span>
+          We sent a 4-digit code to <span className="font-semibold">{userEmail}</span>
         </p>
 
         {error && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+            className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm text-center"
           >
             {error}
           </motion.div>
@@ -101,7 +107,7 @@ export default function EmailVerificationModal({ isOpen, userEmail }) {
 
           <button
             type="submit"
-            disabled={loading || code.join("").length !== 6}
+            disabled={loading || code.join("").length !== 4}
             className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50"
           >
             {loading ? "Verifying..." : "Verify Email"}
@@ -113,7 +119,7 @@ export default function EmailVerificationModal({ isOpen, userEmail }) {
           <button
             onClick={handleResend}
             disabled={resendTimer > 0 || loading}
-            className="text-green-600 hover:text-green-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-green-600 hover:text-green-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend Code"}
           </button>

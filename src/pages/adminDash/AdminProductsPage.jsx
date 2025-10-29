@@ -7,6 +7,8 @@ import AdminSidebar from "./components/AdminSidebar"
 import ProductFormModal from "./components/ProductFormModal"
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi"
 import toast from "react-hot-toast"
+import { fetchCategories } from "../../redux/slices/categoriesSlice"
+import { Loader } from "lucide-react"
 
 export default function AdminProductsPage() {
   const dispatch = useDispatch()
@@ -15,7 +17,10 @@ export default function AdminProductsPage() {
   const [showModal, setShowModal] = useState(false)
   const [editingProduct, setEditingProduct] = useState(null)
 
+  console.log(`categories from parent`, categories)
+
   useEffect(() => {
+    dispatch(fetchCategories())
     dispatch(fetchProducts())
   }, [dispatch])
 
@@ -69,7 +74,10 @@ export default function AdminProductsPage() {
         {/* Products Table */}
         <div className="bg-white rounded-lg shadow overflow-x-auto">
           {loading ? (
-            <div className="p-8 text-center text-gray-500">Loading products...</div>
+            <div className="p-8 text-center text-gray-500">
+              <Loader className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+              Loading products...
+            </div>
           ) : products.length === 0 ? (
             <div className="p-8 text-center text-gray-500">No products found</div>
           ) : (
@@ -89,7 +97,7 @@ export default function AdminProductsPage() {
                 {products.map((product) => (
                   <tr key={product._id} className="hover:bg-gray-100">
                     <td className="px-6 py-4 text-sm text-gray-900 flex items-center gap-2">
-                      <img src={product?.images[0].url} alt="" className="h-10 w-10 rounded-md" />
+                      <img src={product?.images[0].url} alt="" className="h-10 w-13 rounded-md" />
                       {product.name}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">{product.proCategoryId?.name || "N/A"}</td>

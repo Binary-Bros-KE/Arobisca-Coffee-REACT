@@ -6,6 +6,8 @@ import { FiX } from "react-icons/fi"
 import toast from "react-hot-toast"
 
 export default function ProductFormModal({ product, categories, onClose, onSave }) {
+  console.log(`categories`, categories);
+  
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -147,7 +149,7 @@ export default function ProductFormModal({ product, categories, onClose, onSave 
         className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
       >
         {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b sticky top-0 bg-white">
+        <div className="flex justify-between items-center p-6 border-b border-gray-300 sticky top-0 bg-white">
           <h2 className="text-2xl font-bold text-gray-900">{product ? "Edit Product" : "Add New Product"}</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <FiX size={24} />
@@ -294,7 +296,7 @@ export default function ProductFormModal({ product, categories, onClose, onSave 
           </div>
 
           {/* Buttons */}
-          <div className="flex gap-4 pt-6 border-t">
+          <div className="flex gap-4 pt-6 border-t border-gray-300">
             <button
               type="button"
               onClick={onClose}

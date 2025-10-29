@@ -2,6 +2,85 @@
 const API_BASE_URL = "http://localhost:3000"
 
 export const apiService = {
+
+  // Shipping addresses endpoints
+  addShippingAddress: async (userId, addressData, token) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${userId}/shipping-addresses`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(addressData),
+      })
+      return await response.json()
+    } catch (error) {
+      console.error("Error adding shipping address:", error)
+      throw error
+    }
+  },
+
+  getShippingAddresses: async (userId, token) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${userId}/shipping-addresses`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      return await response.json()
+    } catch (error) {
+      console.error("Error fetching shipping addresses:", error)
+      throw error
+    }
+  },
+
+  updateShippingAddress: async (userId, addressId, addressData, token) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${userId}/shipping-addresses/${addressId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(addressData),
+      })
+      return await response.json()
+    } catch (error) {
+      console.error("Error updating shipping address:", error)
+      throw error
+    }
+  },
+
+  deleteShippingAddress: async (userId, addressId, token) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${userId}/shipping-addresses/${addressId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      return await response.json()
+    } catch (error) {
+      console.error("Error deleting shipping address:", error)
+      throw error
+    }
+  },
+
+  // Update password endpoint
+  updatePassword: async (userId, currentPassword, newPassword, token) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${userId}/password`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      })
+      return await response.json()
+    } catch (error) {
+      console.error("Error updating password:", error)
+      throw error
+    }
+  },
+
   // Fetch all categories
   getCategories: async () => {
     try {
@@ -150,6 +229,18 @@ export const apiService = {
     }
   },
 
+  // Shipping methods endpoints
+  getShippingMethods: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/shipping-methods`)
+      if (!response.ok) throw new Error("Failed to fetch shipping methods")
+      return await response.json()
+    } catch (error) {
+      console.error("Error fetching shipping methods:", error)
+      throw error
+    }
+  },
+
   // User endpoints
   getUserProfile: async (userId, token) => {
     try {
@@ -181,6 +272,49 @@ export const apiService = {
   },
 
   // Orders endpoints
+  createOrder: async (orderData) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      })
+      return await response.json()
+    } catch (error) {
+      console.error("Error creating order:", error)
+      throw error
+    }
+  },
+
+  // M-Pesa endpoints
+  initiateMpesaPayment: async (phone, amount) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/playbox_mpesa/stk`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, amount }),
+      })
+      return await response.json()
+    } catch (error) {
+      console.error("Error initiating M-Pesa payment:", error)
+      throw error
+    }
+  },
+
+  checkMpesaPaymentStatus: async (checkoutRequestId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/playbox_mpesa/paymentStatus`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ CheckoutRequestId: checkoutRequestId }),
+      })
+      return await response.json()
+    } catch (error) {
+      console.error("Error checking M-Pesa payment status:", error)
+      throw error
+    }
+  },
+
   getUserOrders: async (userId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/orders/orderByUserId/${userId}`)
@@ -191,6 +325,8 @@ export const apiService = {
     }
   },
 }
+
+
 
 // Cache management utility
 export const cacheManager = {
@@ -216,3 +352,5 @@ export const cacheManager = {
     localStorage.removeItem(key)
   },
 }
+
+

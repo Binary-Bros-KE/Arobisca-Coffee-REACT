@@ -1,19 +1,32 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
-// Async thunk for fetching hero sliders
-export const fetchHeroSliders = createAsyncThunk("heroSlider/fetchHeroSliders", async (_, { rejectWithValue }) => {
-  try {
-    const response = await fetch("http://localhost:5000/api/hero-sliders")
-    if (!response.ok) throw new Error("Failed to fetch hero sliders")
-    const data = await response.json()
-    return {
-      data,
-      timestamp: Date.now(),
+// Async thunk for fetching hero sliders with cache check
+export const fetchHeroSliders = createAsyncThunk(
+  "heroSlider/fetchHeroSliders", 
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const { heroSlider } = getState()
+      const cacheExpiry = 24 * 60 * 60 * 1000 // 24 hours
+      
+      // Check if we have recent data (within 24 hours)
+      if (heroSlider.lastFetch && (Date.now() - heroSlider.lastFetch) < cacheExpiry) {
+        return { data: heroSlider.sliders, fromCache: true }
+      }
+
+      const response = await fetch("http://localhost:5000/api/hero-sliders")
+      if (!response.ok) throw new Error("Failed to fetch hero sliders")
+      const data = await response.json()
+      
+      return {
+        data,
+        timestamp: Date.now(),
+        fromCache: false
+      }
+    } catch (error) {
+      return rejectWithValue(error.message)
     }
-  } catch (error) {
-    return rejectWithValue(error.message)
   }
-})
+)
 
 const heroSliderSlice = createSlice({
   name: "heroSlider",
@@ -22,13 +35,15 @@ const heroSliderSlice = createSlice({
     loading: false,
     error: null,
     lastFetch: null,
-    cacheExpiry: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
   },
   reducers: {
     clearHeroSliders: (state) => {
       state.sliders = []
       state.lastFetch = null
     },
+    forceRefresh: (state) => {
+      state.lastFetch = null
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -38,8 +53,11 @@ const heroSliderSlice = createSlice({
       })
       .addCase(fetchHeroSliders.fulfilled, (state, action) => {
         state.loading = false
-        state.sliders = action.payload.data
-        state.lastFetch = action.payload.timestamp
+        // Only update data if it's not from cache
+        if (!action.payload.fromCache) {
+          state.sliders = action.payload.data
+          state.lastFetch = action.payload.timestamp
+        }
       })
       .addCase(fetchHeroSliders.rejected, (state, action) => {
         state.loading = false
@@ -48,5 +66,5 @@ const heroSliderSlice = createSlice({
   },
 })
 
-export const { clearHeroSliders } = heroSliderSlice.actions
+export const { clearHeroSliders, forceRefresh } = heroSliderSlice.actions
 export default heroSliderSlice.reducer

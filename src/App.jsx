@@ -13,6 +13,8 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import Home from './pages/home/Home'
 import ProductsPage from './pages/products/ProductsPage'
 import ProductDetailsPage from './pages/prooductDetail/ProductDetailsPage'
+import CheckoutPage from './pages/checkout/CheckoutPage'
+import OrderSuccessPage from './pages/checkout/components/OrderSuccessPage'
 
 // Auth Routes 
 import LoginPage from "./pages/auth/LoginPage"
@@ -29,10 +31,17 @@ import AdminCategoriesPage from "./pages/adminDash/AdminCategoriesPage"
 import AdminBlankPage from "./pages/adminDash/AdminBlankPage"
 import SessionGuard from "./components/SessionGuard"
 import EmailVerificationPage from "./pages/auth/EmailVerificationPage"
+import AdminShippingFeesPage from "./pages/adminDash/AdminShippingFeesPage"
+import AdminCouponsPage from "./pages/adminDash/AdminCouponsPage"
+import AdminOrdersPage from "./pages/adminDash/AdminOrdersPage"
+import AdminUsersPage from "./pages/adminDash/AdminUsersPage"
+import ScrollToTop from "./services/ScrollToTop"
+
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <SessionGuard>
         <div className="flex flex-col min-h-screen">
           <Toaster position="top-right" />
@@ -65,9 +74,14 @@ function App() {
               <Route path="/admin-panel" element={<AdminDashboard />} />
               <Route path="/admin-panel/products" element={<AdminProductsPage />} />
               <Route path="/admin-panel/categories" element={<AdminCategoriesPage />} />
-              <Route path="/admin-panel/orders" element={<AdminBlankPage title="Orders Management" />} />
-              <Route path="/admin-panel/coupons" element={<AdminBlankPage title="Coupons Management" />} />
+              <Route path="/admin-panel/orders" element={<AdminOrdersPage />} />
+              <Route path="/admin-panel/coupons" element={<AdminCouponsPage />} />
               <Route path="/admin-panel/design" element={<AdminBlankPage title="Design Settings" />} />
+              <Route path="/admin-panel/shipping-fees" element={<AdminShippingFeesPage />} />
+              <Route path="/admin-panel/users" element={<AdminUsersPage />} />
+
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/checkout/success" element={<OrderSuccessPage />} />
             </Routes>
           </main>
           <Footer />

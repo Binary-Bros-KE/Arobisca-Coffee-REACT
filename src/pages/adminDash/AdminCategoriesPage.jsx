@@ -7,6 +7,7 @@ import AdminSidebar from "./components/AdminSidebar"
 import CategoryFormModal from "./components/CategoryFormModal"
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi"
 import toast from "react-hot-toast"
+import { Loader } from "lucide-react"
 
 export default function AdminCategoriesPage() {
   const dispatch = useDispatch()
@@ -71,7 +72,10 @@ export default function AdminCategoriesPage() {
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
-            <div className="col-span-full text-center text-gray-500 py-8">Loading categories...</div>
+            <div className="col-span-full text-center text-gray-500 py-8 bg-white">
+              <Loader className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+              Loading categories...
+            </div>
           ) : categories.length === 0 ? (
             <div className="col-span-full text-center text-gray-500 py-8">No categories found</div>
           ) : (

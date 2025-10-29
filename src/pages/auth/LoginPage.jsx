@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, Link } from "react-router-dom"
 import { loginUser, clearError } from "../../redux/slices/authSlice"
@@ -18,29 +18,34 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const { loading, error, isAuthenticated } = useSelector((state) => state.auth)
 
-  if (isAuthenticated) {
-    navigate("/dashboard")
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
+
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    dispatch(clearError())
+    e.preventDefault();
+    dispatch(clearError());
 
-    localStorage.setItem("rememberMe", rememberMe)
+    const result = await dispatch(loginUser({ email, password }));
+    console.log("Login result:", result);
 
-    const result = await dispatch(loginUser({ email, password }))
-
-    if (result.payload?.meta?.requestStatus === "fulfilled") {
-      sessionManager.setSession(rememberMe)
-      toast.success("Logged in successfully!")
-      navigate("/dashboard")
-    } else if (result.payload === undefined) {
-      toast.error(error || "Login failed");
+    if (result.meta.requestStatus === "fulfilled") {
+      localStorage.setItem("rememberMe", rememberMe);
+      sessionManager.setSession(rememberMe);
+      toast.success("Logged in successfully!");
+      navigate("/dashboard");
+    } else {
+      const errorMessage = result.payload || "Login failed";
+      toast.error(errorMessage);
     }
-  }
+  };
+
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-green-50 flex items-center justify-center px-4 py-12">
+    <div className="bg-gradient-to-br from-amber-50 to-green-50 flex items-center justify-center px-4 py-12 max-md:py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -73,7 +78,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder:text-gray-300"
                   placeholder="you@example.com"
                 />
               </div>
@@ -88,7 +93,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder:text-gray-300"
                   placeholder="••••••••"
                 />
                 <button
@@ -119,7 +124,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 cursor-pointer"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>

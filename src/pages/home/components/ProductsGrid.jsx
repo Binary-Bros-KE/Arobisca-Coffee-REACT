@@ -35,14 +35,14 @@ export default function ProductsGrid() {
     <div className="min-h-screen bg-white">
 
       {/* Featured Products Section */}
-      <section className="py-12 px-4 md:px-8 bg-white">
+      <section className="py-12 px-4 md:px-8 bg-white" id="daily-deals">
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <div className="w-1 h-8 bg-amber-600 rounded"></div>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                Featured <span className="text-amber-600">Products</span>
+                Our Daily <span className="text-amber-600">Deals</span>
               </h2>
             </div>
             <Link to="/products" className="text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-2">
@@ -89,7 +89,7 @@ export default function ProductsGrid() {
       </section>
 
       {/* New Arrivals Section */}
-      <section className="py-12 px-4 md:px-8 bg-gray-50">
+      <section className="py-12 px-4 md:px-8 bg-gray-50" id="new-arrivals">
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="flex items-center justify-between mb-8">
@@ -114,7 +114,7 @@ export default function ProductsGrid() {
       </section>
 
       {/* Best Sellers Section */}
-      <section className="py-12 px-4 md:px-8 bg-white">
+      <section className="py-12 px-4 md:px-8 bg-white" id="best-sellers">
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="flex items-center justify-between mb-8">

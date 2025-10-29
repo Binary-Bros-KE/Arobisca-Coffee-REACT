@@ -4,12 +4,13 @@ import { useDispatch, useSelector } from "react-redux"
 import { motion, AnimatePresence } from "framer-motion"
 import { removeFromCart, updateCartQuantity } from "../redux/slices/cartSlice"
 import { toggleCart } from "../redux/slices/uiSlice"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { BiMinus, BiPlus, BiTrash } from "react-icons/bi"
 import { IoClose } from "react-icons/io5"
 
 export default function CartSidebar() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const isOpen = useSelector((state) => state.ui.isCartOpen)
   const { items: cartItems, totalPrice } = useSelector((state) => state.cart)
 
@@ -19,6 +20,11 @@ export default function CartSidebar() {
 
   const handleRemove = (productId) => {
     dispatch(removeFromCart(productId))
+  }
+
+  const handleCheckout = () => {
+    dispatch(toggleCart())
+    navigate("/checkout");
   }
 
   const handleQuantityChange = (productId, quantity) => {
@@ -47,13 +53,13 @@ export default function CartSidebar() {
             className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b">
+            <div className="flex items-center justify-between p-6 border-b border-gray-300">
               <h2 className="text-2xl font-bold text-gray-900">Your Cart</h2>
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleClose}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
               >
                 <IoClose size={24} />
               </motion.button>
@@ -85,7 +91,7 @@ export default function CartSidebar() {
                     {/* Product Image */}
                     <Link to={`/product/${item._id}`} onClick={handleClose} className="flex-shrink-0">
                       <img
-                        src={item.images?.[0]?.url || "/placeholder.svg"}
+                        src={item.images?.[0]?.url}
                         alt={item.name}
                         className="w-20 h-20 object-cover rounded-lg"
                       />
@@ -110,7 +116,7 @@ export default function CartSidebar() {
                         <motion.button
                           whileTap={{ scale: 0.95 }}
                           onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
-                          className="p-1 hover:bg-gray-200 rounded transition-colors"
+                          className="p-1 hover:bg-gray-200 rounded transition-colors cursor-pointer"
                         >
                           <BiMinus size={14} />
                         </motion.button>
@@ -118,7 +124,7 @@ export default function CartSidebar() {
                         <motion.button
                           whileTap={{ scale: 0.95 }}
                           onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
-                          className="p-1 hover:bg-gray-200 rounded transition-colors"
+                          className="p-1 hover:bg-gray-200 rounded transition-colors cursor-pointer"
                         >
                           <BiPlus size={14} />
                         </motion.button>
@@ -130,7 +136,7 @@ export default function CartSidebar() {
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleRemove(item._id)}
-                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                     >
                       <BiTrash size={18} />
                     </motion.button>
@@ -141,15 +147,16 @@ export default function CartSidebar() {
 
             {/* Footer */}
             {cartItems.length > 0 && (
-              <div className="border-t p-6 space-y-4">
+              <div className="border-t p-6 space-y-4 border-gray-300">
                 <div className="flex justify-between items-center text-lg font-bold">
                   <span>Total:</span>
-                  <span className="text-amber-600">{totalPrice.toFixed(2)}</span>
+                  <span className="text-amber-600">Kes {totalPrice.toLocaleString('en-KE')}</span>
                 </div>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full bg-amber-600 text-white py-3 rounded-lg font-semibold hover:bg-amber-700 transition-colors"
+                  onClick={handleCheckout}
+                  className="w-full bg-amber-600 text-white py-3 rounded-lg font-semibold hover:bg-amber-700 transition-colors cursor-pointer"
                 >
                   Proceed to Checkout
                 </motion.button>
@@ -157,7 +164,7 @@ export default function CartSidebar() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleClose}
-                  className="w-full bg-gray-200 text-gray-900 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                  className="w-full bg-gray-200 text-gray-900 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors cursor-pointer"
                 >
                   Continue Shopping
                 </motion.button>

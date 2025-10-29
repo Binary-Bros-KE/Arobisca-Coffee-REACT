@@ -42,7 +42,14 @@ export default function ProductsPage() {
 
     // Filter by category
     if (filters.category) {
-      result = result.filter((product) => product.proCategoryId?._id === filters.category)
+      // First try to find category by slug
+      const categoryBySlug = categories.find((cat) => cat.slug === filters.category)
+      if (categoryBySlug) {
+        result = result.filter((product) => product.proCategoryId?._id === categoryBySlug._id)
+      } else {
+        // Fallback to ID-based filtering for backward compatibility
+        result = result.filter((product) => product.proCategoryId?._id === filters.category)
+      }
     }
 
     // Filter by price range

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { FiMenu, FiX, FiHome, FiBox, FiTag, FiShoppingCart, FiGift, FiSettings } from "react-icons/fi"
+import { FiMenu, FiX, FiHome, FiBox, FiTag, FiShoppingCart, FiGift, FiSettings, FiMapPin, FiUsers } from "react-icons/fi"
 import { Link, useLocation } from "react-router-dom"
 
 export default function AdminSidebar() {
@@ -13,7 +13,9 @@ export default function AdminSidebar() {
     { label: "Dashboard", icon: FiHome, path: "/admin-panel" },
     { label: "Products", icon: FiBox, path: "/admin-panel/products" },
     { label: "Categories", icon: FiTag, path: "/admin-panel/categories" },
+    { label: "Shipping", icon: FiMapPin, path: "/admin-panel/shipping-fees" },
     { label: "Orders", icon: FiShoppingCart, path: "/admin-panel/orders" },
+    { label: "Users", icon: FiUsers, path: "/admin-panel/users" },
     { label: "Coupons", icon: FiGift, path: "/admin-panel/coupons" },
     { label: "Design", icon: FiSettings, path: "/admin-panel/design" },
   ]
@@ -35,7 +37,7 @@ export default function AdminSidebar() {
         initial={{ x: -300 }}
         animate={{ x: isOpen ? 0 : -300 }}
         transition={{ duration: 0.3 }}
-        className="fixed left-0 top-0 h-screen w-64 bg-gray-900 text-white shadow-lg z-40 lg:static lg:translate-x-0 overflow-y-auto"
+        className="fixed left-0 top-0 h-screen w-64 bg-gray-900 text-white shadow-lg z-40 lg:sticky lg:top-32  lg:translate-x-0 overflow-y-auto"
       >
         {/* Logo */}
         <div className="p-6 border-b border-gray-700">

@@ -44,16 +44,18 @@ export default function SignupPage() {
       }),
     )
 
-    if (result.payload !== undefined) {
-      toast.success("Account created! Please verify your email.")
+    console.log(`result`, result);
+
+    if (result.meta.requestStatus === "fulfilled") {
+      toast.success("Account created successfully!")
       navigate("/verify-email", { state: { email: formData.email } })
-    } else if (result.payload) {
+    } else if (result.error) {
       toast.error(result.payload)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-green-50 flex items-center justify-center px-4 py-12">
+    <div className="bg-gradient-to-br from-amber-50 to-green-50 flex items-center justify-center px-4 py-12 max-md:py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -87,7 +89,7 @@ export default function SignupPage() {
                   value={formData.username}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder:text-gray-300"
                   placeholder="johndoe"
                 />
               </div>
@@ -103,7 +105,7 @@ export default function SignupPage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder:text-gray-300"
                   placeholder="you@example.com"
                 />
               </div>
@@ -119,7 +121,7 @@ export default function SignupPage() {
                   value={formData.phoneNumber}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder:text-gray-300"
                   placeholder="+1 (555) 000-0000"
                 />
               </div>
@@ -135,7 +137,7 @@ export default function SignupPage() {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder:text-gray-300"
                   placeholder="••••••••"
                 />
                 <button
@@ -158,7 +160,7 @@ export default function SignupPage() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder:text-gray-300"
                   placeholder="••••••••"
                 />
                 <button
@@ -174,7 +176,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 cursor-pointer"
             >
               {loading ? "Creating Account..." : "Create Account"}
             </button>
@@ -183,7 +185,7 @@ export default function SignupPage() {
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               Already have an account?{" "}
-              <Link to="/login" className="text-amber-600 hover:text-amber-700 font-semibold">
+              <Link to="/login" className="text-amber-600 hover:text-amber-700 font-semibold cursor-pointer">
                 Sign in
               </Link>
             </p>

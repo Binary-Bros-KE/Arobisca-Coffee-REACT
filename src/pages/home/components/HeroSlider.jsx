@@ -16,14 +16,15 @@ import { FiArrowRight } from "react-icons/fi"
 const PLACEHOLDER_SLIDERS = [
     {
         id: 1,
-        smallText: "UP TO 30% TO 50% OFF",
+        smallText: "Free delivery within Nairobi CBD",
         title: "Save big on the latest coffee trends",
         description:
             "Browse through our diverse range of meticulously crafted coffee products, designed to bring out your individuality and cater to your sense of style.",
         buttonText: "Shop Now",
+        href: "",
         buttonLink: "/shop",
-        largeImage: "/premium-coffee-products-display.jpg",
-        smallImage: "/coffee-products-mobile.jpg",
+        largeImage: "/hero-sliders/coffee-1.jpg",
+        smallImage: "/hero-sliders/coffee-1.jpg",
     },
     {
         id: 2,
@@ -32,6 +33,7 @@ const PLACEHOLDER_SLIDERS = [
         description:
             "Discover our curated selection of professional-grade coffee machines that bring café quality to your home.",
         buttonText: "Explore Machines",
+        href: "",
         buttonLink: "/machines",
         largeImage: "/coffee-machines-showcase.jpg",
         smallImage: "/coffee-machine-mobile.jpg",
@@ -42,6 +44,7 @@ const PLACEHOLDER_SLIDERS = [
         title: "Essential Coffee Accessories",
         description: "Complete your coffee experience with our handpicked collection of premium accessories and tools.",
         buttonText: "View Accessories",
+        href: "",
         buttonLink: "/accessories",
         largeImage: "/coffee-accessories-collection.jpg",
         smallImage: "/coffee-accessories-mobile.jpg",
@@ -72,12 +75,11 @@ export default function HeroSlider() {
     }, [sliders])
 
     return (
-        <div className="w-full overflow-hidden bg-gray-900">
+        <div className="w-full overflow-hidden bg-gray-900 h-[450px] max-md:h-[350px]">
             <Swiper
                 modules={[Autoplay, Navigation, Pagination]}
                 autoplay={{ delay: 5000, disableOnInteraction: false }}
                 navigation
-                pagination={{ clickable: true }}
                 loop
                 className="w-full h-full"
             >
@@ -85,22 +87,22 @@ export default function HeroSlider() {
                     <SwiperSlide key={slider.id} className="relative w-full h-full">
                         {/* Background Image */}
                         <div
-                            className="absolute inset-0 bg-cover bg-center hidden md:block"
+                            className="absolute h-full inset-0 bg-cover bg-center hidden md:block"
                             style={{
                                 backgroundImage: `url(${slider.largeImage})`,
                             }}
                         />
                         <div
-                            className="absolute inset-0 bg-cover bg-center md:hidden"
+                            className="absolute h-full inset-0 bg-cover bg-center md:hidden"
                             style={{
                                 backgroundImage: `url(${slider.smallImage})`,
                             }}
                         />
 
-                        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent" />
+                        <div className="min-h-full absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent max-md:py-4" />
 
                         {/* Content */}
-                        <div className="relative h-full flex items-center px-4 sm:px-8 md:px-16 lg:px-24">
+                        <div className="relative h-full flex items-center px-4 max-md:px-8 md:px-16 lg:px-24 py-6">
                             <motion.div
                                 initial={{ opacity: 0, x: -50 }}
                                 whileInView={{ opacity: 1, x: 0 }}
@@ -112,7 +114,7 @@ export default function HeroSlider() {
                                     initial={{ opacity: 0 }}
                                     whileInView={{ opacity: 1 }}
                                     transition={{ delay: 0.2, duration: 0.6 }}
-                                    className="text-sm sm:text-base md:text-lg font-semibold text-coffee-light mb-2 sm:mb-4 tracking-widest"
+                                    className="text-sm max-md:text-xs md:text-md font-semibold text-amber-600 mb-2 max-md:mb-2 tracking-widest uppercase"
                                 >
                                     {slider.smallText}
                                 </motion.p>
@@ -122,7 +124,7 @@ export default function HeroSlider() {
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.3, duration: 0.6 }}
-                                    className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight font-serif"
+                                    className="text-3xl max-md:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-2 max-md:mb-4 leading-tight font-serif"
                                 >
                                     {slider.title.split(" ").map((word, idx) => (
                                         <span key={idx} className={idx % 3 === 1 ? "text-accent-pink" : "text-white"}>
@@ -136,7 +138,7 @@ export default function HeroSlider() {
                                     initial={{ opacity: 0 }}
                                     whileInView={{ opacity: 1 }}
                                     transition={{ delay: 0.4, duration: 0.6 }}
-                                    className="text-sm sm:text-base md:text-lg text-gray-300 mb-6 sm:mb-8 leading-relaxed max-w-xl"
+                                    className="text-sm max-md:text-xs md:text-lg text-gray-300 mb-6 max-md:mb-2 leading-relaxed max-w-xl"
                                 >
                                     {slider.description}
                                 </motion.p>
@@ -149,7 +151,7 @@ export default function HeroSlider() {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => (window.location.href = slider.buttonLink)}
-                                    className="bg-secondary hover:bg-accent-pink-dark text-white font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-lg flex items-center gap-2 transition-all duration-300 grou"
+                                    className="border border-white hover:bg-accent-pink-dark text-white font-bold py-2 max-md:py-2 px-6 max-md:px-8 rounded-lg flex items-center gap-2 transition-all duration-300"
                                 >
                                     {slider.buttonText}
                                     <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
@@ -159,20 +161,6 @@ export default function HeroSlider() {
                     </SwiperSlide>
                 ))}
             </Swiper>
-
-            {/* Loading State */}
-            {/* {loading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent-pink" />
-                </div>
-            )} */}
-
-            {/* Error State */}
-            {/* {error && (
-                <div className="absolute bottom-4 left-4 right-4 bg-red-500/90 text-white p-4 rounded-lg">
-                    <p className="text-sm">Error loading sliders: {error}</p>
-                </div>
-            )} */}
         </div>
     )
 }

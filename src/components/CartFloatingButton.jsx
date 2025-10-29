@@ -19,7 +19,7 @@ export default function CartFloatingButton() {
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
       onClick={handleClick}
-      className="fixed right-6 bottom-6 bg-amber-600 text-white p-4 rounded-full shadow-lg hover:bg-amber-700 transition-colors z-30"
+      className="fixed right-6 bottom-6 bg-amber-600 text-white p-4 rounded-full shadow-lg hover:bg-amber-700 transition-colors z-30 cursor-pointer"
     >
       <CgShoppingCart size={24} />
       {cartItems.length > 0 && (

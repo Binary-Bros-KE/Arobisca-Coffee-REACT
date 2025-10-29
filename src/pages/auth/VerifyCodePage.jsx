@@ -6,6 +6,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom"
 import { verifyResetCode, clearError } from "../../redux/slices/authSlice"
 import { motion } from "framer-motion"
 import { FiArrowLeft } from "react-icons/fi"
+import toast from "react-hot-toast"
 
 export default function VerifyCodePage() {
   const [code, setCode] = useState("")
@@ -25,13 +26,19 @@ export default function VerifyCodePage() {
     e.preventDefault()
     dispatch(clearError())
     const result = await dispatch(verifyResetCode({ email, resetCode: code }))
-    if (result.payload) {
+    console.log(`code result`, result);
+
+    if (result.meta.requestStatus === "fulfilled") {
+      toast.success(`Code Verified successfully`)
       navigate("/reset-password", { state: { email, resetCode: code } })
+    } else {
+      const errorMessage = result.payload || "Login failed";
+      toast.error(errorMessage);
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-green-50 flex items-center justify-center px-4 py-12">
+    <div className="bg-gradient-to-br from-amber-50 to-green-50 flex items-center justify-center px-4 py-12 max-md:py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -79,7 +86,7 @@ export default function VerifyCodePage() {
             <button
               type="submit"
               disabled={loading || code.length !== 4}
-              className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 cursor-pointer"
             >
               {loading ? "Verifying..." : "Verify Code"}
             </button>

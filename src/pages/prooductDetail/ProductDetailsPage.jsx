@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import { Swiper, SwiperSlide } from "swiper/react"
@@ -24,6 +24,10 @@ export default function ProductDetailsPage() {
 
   const products = useSelector((state) => state.products.items)
   const favorites = useSelector((state) => state.favorites.items)
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   // Get product from Redux state
   const product = useMemo(() => products.find((p) => p._id === productId), [products, productId])
@@ -203,13 +207,12 @@ export default function ProductDetailsPage() {
                     whileTap={{ scale: 0.98 }}
                     onClick={handleAddToCart}
                     disabled={product.quantity === 0}
-                    className={`flex-1 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all ${
-                      isAdded
+                    className={`flex-1 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all ${isAdded
                         ? "bg-green-600 text-white"
                         : product.quantity === 0
                           ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                           : "bg-amber-600 text-white hover:bg-amber-700"
-                    }`}
+                      }`}
                   >
                     <FiShoppingCart size={20} />
                     {isAdded ? "Added to Cart!" : "Add to Cart"}
@@ -219,21 +222,13 @@ export default function ProductDetailsPage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleToggleFavorite}
-                    className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-                      isFavorite
+                    className={`px-6 py-3 rounded-lg font-semibold transition-all ${isFavorite
                         ? "bg-red-500 text-white hover:bg-red-600"
                         : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
+                      }`}
                   >
                     <BiHeart size={20} fill={isFavorite ? "currentColor" : "none"} />
                   </motion.button>
-                </div>
-
-                {/* Additional Info */}
-                <div className="border-t pt-4 mt-4 space-y-2 text-sm text-gray-600">
-                  <p>✓ Free shipping on orders over 2000</p>
-                  <p>✓ 30-day money-back guarantee</p>
-                  <p>✓ Secure checkout</p>
                 </div>
               </div>
             </div>

@@ -9,7 +9,7 @@ import { FiMail, FiArrowRight } from "react-icons/fi"
 import toast from "react-hot-toast"
 
 export default function EmailVerificationPage() {
-  const [code, setCode] = useState(["", "", "", "", "", ""])
+  const [code, setCode] = useState(["", "", "", ""])
   const [resendTimer, setResendTimer] = useState(0)
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -47,8 +47,8 @@ export default function EmailVerificationPage() {
     dispatch(clearError())
 
     const verificationCode = code.join("")
-    if (verificationCode.length !== 6) {
-      toast.error("Please enter all 6 digits")
+    if (verificationCode.length !== 4) {
+      toast.error("Please enter all 4 digits")
       return
     }
 
@@ -61,7 +61,8 @@ export default function EmailVerificationPage() {
   const handleResend = async () => {
     dispatch(clearError())
     const result = await dispatch(requestEmailVerificationCode(email))
-    if (!result.payload) {
+
+    if (result.meta.requestStatus === "fulfilled") {
       toast.success("Verification code sent to your email")
       setResendTimer(60)
     } else {
@@ -70,7 +71,7 @@ export default function EmailVerificationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-green-50 flex items-center justify-center px-4 py-12">
+    <div className="bg-gradient-to-br from-amber-50 to-green-50 flex items-center justify-center px-4 py-12 max-md:py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -83,14 +84,14 @@ export default function EmailVerificationPage() {
               <FiMail className="text-green-600 text-2xl" />
             </div>
             <h1 className="text-3xl font-bold text-amber-900 mb-2">Verify Your Email</h1>
-            <p className="text-gray-600">We sent a 6-digit code to {email}</p>
+            <p className="text-gray-600">We sent a 4-digit code to <span className="font-bold">{email}</span></p>
           </div>
 
           {error && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+              className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm text-center"
             >
               {error}
             </motion.div>
@@ -114,8 +115,8 @@ export default function EmailVerificationPage() {
 
             <button
               type="submit"
-              disabled={loading || code.join("").length !== 6}
-              className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              disabled={loading || code.join("").length !== 4}
+              className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? "Verifying..." : "Verify Email"}
               {!loading && <FiArrowRight />}
@@ -127,7 +128,7 @@ export default function EmailVerificationPage() {
             <button
               onClick={handleResend}
               disabled={resendTimer > 0 || loading}
-              className="text-green-600 hover:text-green-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-green-600 hover:text-green-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend Code"}
             </button>

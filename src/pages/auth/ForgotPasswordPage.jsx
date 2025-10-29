@@ -6,6 +6,7 @@ import { useNavigate, Link } from "react-router-dom"
 import { requestPasswordReset, clearError } from "../../redux/slices/authSlice"
 import { motion } from "framer-motion"
 import { FiMail, FiArrowLeft } from "react-icons/fi"
+import toast from "react-hot-toast"
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
@@ -18,9 +19,13 @@ export default function ForgotPasswordPage() {
     e.preventDefault()
     dispatch(clearError())
     const result = await dispatch(requestPasswordReset(email))
-    if (result.payload) {
+    if (result.meta.requestStatus === "fulfilled") {
+      toast.success(result.payload)
       setSubmitted(true)
-      setTimeout(() => navigate("/verify-code", { state: { email } }), 2000)
+      setTimeout(() => navigate("/verify-code", { state: { email } }), 1000)
+    } else {
+      const errorMessage = result.payload || "An error occured. Try again later";
+      toast.error(errorMessage);
     }
   }
 
@@ -72,7 +77,7 @@ export default function ForgotPasswordPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder:text-gray-300"
                   placeholder="you@example.com"
                 />
               </div>
@@ -81,7 +86,7 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 cursor-pointer"
             >
               {loading ? "Sending..." : "Send Reset Code"}
             </button>

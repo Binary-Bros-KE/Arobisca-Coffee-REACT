@@ -49,13 +49,13 @@ export default function FavoritesSidebar() {
             className="fixed left-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b">
+            <div className="flex items-center justify-between p-6 border-b border-gray-300">
               <h2 className="text-2xl font-bold text-gray-900">Favorites</h2>
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleClose}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
               >
                 <IoClose size={24} />
               </motion.button>
@@ -101,7 +101,7 @@ export default function FavoritesSidebar() {
                         </h3>
                       </Link>
                       <p className="text-sm text-gray-600 mt-1">{product.proCategoryId?.name}</p>
-                      <p className="text-lg font-bold text-gray-900 mt-2">{product.offerPrice || product.price}</p>
+                      <p className="text-lg font-bold text-gray-900 mt-2">Kes {product.offerPrice.toLocaleString('en-KE') || product.price.toLocaleString('en-KE')}</p>
 
                       {/* Action Buttons */}
                       <div className="flex gap-2 mt-3">
@@ -109,7 +109,7 @@ export default function FavoritesSidebar() {
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => handleAddToCart(product)}
-                          className="flex-1 flex items-center justify-center gap-1 bg-amber-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-amber-700 transition-colors"
+                          className="flex-1 flex items-center justify-center gap-1 bg-amber-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-amber-700 transition-colors cursor-pointer"
                         >
                           <CgShoppingCart size={14} />
                           Add
@@ -118,7 +118,7 @@ export default function FavoritesSidebar() {
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => handleRemove(product._id)}
-                          className="flex-1 flex items-center justify-center gap-1 bg-red-50 text-red-600 py-2 rounded-lg text-sm font-semibold hover:bg-red-100 transition-colors"
+                          className="flex-1 flex items-center justify-center gap-1 bg-red-50 text-red-600 py-2 rounded-lg text-sm font-semibold hover:bg-red-100 transition-colors cursor-pointer"
                         >
                           <BiTrash size={14} />
                           Remove

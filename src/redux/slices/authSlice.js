@@ -35,7 +35,7 @@ export const requestPasswordReset = createAsyncThunk(
   async (email, { rejectWithValue }) => {
     try {
       const response = await apiService.requestPasswordReset(email)
-      if (response.message) {
+      if (response.success) {
         return response.message
       }
       return rejectWithValue("Failed to send reset code")
@@ -50,7 +50,7 @@ export const verifyResetCode = createAsyncThunk(
   async ({ email, resetCode }, { rejectWithValue }) => {
     try {
       const response = await apiService.verifyResetCode(email, resetCode)
-      if (response.message) {
+      if (response.success) {
         return { email, resetCode }
       }
       return rejectWithValue(response.message)
@@ -65,7 +65,7 @@ export const resetPassword = createAsyncThunk(
   async ({ email, resetCode, newPassword }, { rejectWithValue }) => {
     try {
       const response = await apiService.resetPassword(email, resetCode, newPassword)
-      if (response.message) {
+      if (response.success) {
         return response.message
       }
       return rejectWithValue("Failed to reset password")
@@ -105,12 +105,86 @@ export const requestEmailVerificationCode = createAsyncThunk(
   },
 )
 
+// Add these new async thunks to your existing authSlice
+export const addShippingAddress = createAsyncThunk(
+  "auth/addShippingAddress",
+  async ({ userId, addressData }, { getState, rejectWithValue }) => {
+    try {
+      const { auth } = getState()
+      const token = auth.token
+
+      const response = await apiService.addShippingAddress(userId, addressData, token)
+      if (response.success) {
+        return response.data // Updated user with new shipping address
+      }
+      return rejectWithValue(response.message)
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
+)
+
+export const deleteShippingAddress = createAsyncThunk(
+  "auth/deleteShippingAddress",
+  async ({ userId, addressId }, { getState, rejectWithValue }) => {
+    try {
+      const { auth } = getState();
+      const token = auth.token;
+
+      const response = await apiService.deleteShippingAddress(userId, addressId, token);
+      if (response.success) {
+        return response.data; // updated user object from backend
+      }
+      return rejectWithValue(response.message);
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+
+export const updateUserPassword = createAsyncThunk(
+  "auth/updatePassword",
+  async ({ userId, currentPassword, newPassword }, { getState, rejectWithValue }) => {
+    try {
+      const { auth } = getState()
+      const token = auth.token
+
+      const response = await apiService.updatePassword(userId, currentPassword, newPassword, token)
+      if (response.success) {
+        return response.message
+      }
+      return rejectWithValue(response.message)
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
+)
+
+export const updateUserProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async ({ userId, userData }, { getState, rejectWithValue }) => {
+    try {
+      const { auth } = getState()
+      const token = auth.token
+
+      const response = await apiService.updateUserProfile(userId, userData, token)
+      if (response.success) {
+        return response.data // Updated user data
+      }
+      return rejectWithValue(response.message)
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
+)
+
 const initialState = {
   user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
   token: localStorage.getItem("token") || null,
   loading: false,
   error: null,
-  isAuthenticated: !!localStorage.getItem("token"),
+  isAuthenticated: !!(localStorage.getItem("token") && localStorage.getItem("user")),
   resetEmail: null,
   resetCode: null,
   isEmailVerified: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).isEmailVerified : false,
@@ -240,6 +314,64 @@ const authSlice = createSlice({
         state.resetCode = null
       })
       .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload
+      })
+      .addCase(updateUserProfile.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.loading = false
+        state.user = action.payload
+        state.isEmailVerified = action.payload.isEmailVerified // 👈 sync top-level field
+        localStorage.setItem("user", JSON.stringify(state.user))
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload
+      })
+
+      // Add shipping address
+      .addCase(addShippingAddress.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(addShippingAddress.fulfilled, (state, action) => {
+        state.loading = false
+        state.user = action.payload
+        localStorage.setItem("user", JSON.stringify(state.user))
+      })
+      .addCase(addShippingAddress.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload
+      })
+
+      // Delete shipping address
+      .addCase(deleteShippingAddress.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteShippingAddress.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        localStorage.setItem("user", JSON.stringify(state.user));
+      })
+      .addCase(deleteShippingAddress.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+
+      // Update password
+      .addCase(updateUserPassword.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(updateUserPassword.fulfilled, (state) => {
+        state.loading = false
+      })
+      .addCase(updateUserPassword.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload
       })
