@@ -37,10 +37,10 @@ const Navbar = () => {
   const navLinks = [
     { label: "Home", href: "/" },
     { label: "Products", href: "/products" },
-    { label: "About", href: "#" },
+    { label: "About", href: "/about" },
     { label: "New Arrivals", href: "/#new-arrivals" },
     { label: "Best Sellers", href: "/#best-sellers" },
-    { label: "Contact", href: "#" },
+    { label: "Contact", href: "/contact" },
   ]
 
   // Fetch categories and products on mount
@@ -100,11 +100,6 @@ const Navbar = () => {
     setIsProfileOpen(false)
   }
 
-  const handleCategoryClick = (categorySlug) => {
-    navigate(`/products?category=${categorySlug}`)
-    setIsCategoriesOpen(false)
-    setIsMenuOpen(false)
-  }
 
   const handleSearchResultClick = (type, item) => {
     if (type === 'category') {
@@ -464,9 +459,9 @@ const Navbar = () => {
                     >
                       <div className="p-2 max-h-80 overflow-y-auto">
                         {categories.map((category) => (
-                          <button
+                          <Link
                             key={category._id}
-                            onClick={() => handleCategoryClick(category.slug)}
+                            to={`/products/${category.slug}`}
                             className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-md text-sm text-gray-700 flex items-center gap-3 cursor-pointer"
                           >
                             {category.image ? (
@@ -481,7 +476,7 @@ const Navbar = () => {
                               </div>
                             )}
                             <span>{category.name}</span>
-                          </button>
+                          </Link>
                         ))}
                         {categories.length === 0 && (
                           <p className="px-3 py-2 text-sm text-gray-500">No categories available</p>
@@ -521,169 +516,169 @@ const Navbar = () => {
           </div>
         </div>
 
-{/* Mobile Menu */}
-<AnimatePresence>
-  {isMenuOpen && (
-    <>
-      {/* Background overlay (click to close) */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.5 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black z-40"
-        onClick={() => setIsMenuOpen(false)}
-      />
-
-      {/* Slide-in Menu */}
-      <motion.div
-        initial={{ x: "100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "100%" }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed inset-y-0 right-0 w-full sm:w-[420px] bg-white z-50 flex flex-col shadow-xl"
-      >
-        {/* Header with close button */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800">Menu</h2>
-          <button
-            onClick={() => setIsMenuOpen(false)}
-            className="text-gray-600 hover:text-gray-900 focus:outline-none"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto px-4 py-6 space-y-3">
-          {/* Categories */}
-          <div className="space-y-2">
-            <p className="px-4 py-2 font-semibold text-gray-700">Categories</p>
-            {categories.map((category) => (
-              <button
-                key={category._id}
-                onClick={() => handleCategoryClick(category.slug)}
-                className="block w-full text-left px-4 py-2 text-gray-700 hover:text-[#6F4E37] hover:bg-gray-50 rounded transition-colors flex items-center gap-3"
-              >
-                {category.image ? (
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="w-6 h-6 object-cover rounded"
-                  />
-                ) : (
-                  <div className="w-6 h-6 bg-green-100 rounded flex items-center justify-center">
-                    <span className="text-green-600 text-xs font-bold">C</span>
-                  </div>
-                )}
-                <span>{category.name}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Other Navigation Links */}
-          {navLinks.map((link, index) => (
-            <Link key={index} to={link.href} onClick={() => setIsMenuOpen(false)}>
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <>
+              {/* Background overlay (click to close) */}
               <motion.div
-                className="block w-full text-left px-4 py-2 text-gray-700 hover:text-[#6F4E37] hover:bg-gray-50 rounded transition-colors"
-                whileHover={{ scale: 1.02 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.5 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black z-40"
+                onClick={() => setIsMenuOpen(false)}
+              />
+
+              {/* Slide-in Menu */}
+              <motion.div
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="fixed inset-y-0 right-0 w-full sm:w-[420px] bg-white z-50 flex flex-col shadow-xl"
               >
-                {link.label}
-              </motion.div>
-            </Link>
-          ))}
-
-          {/* Additional Mobile Menu Items */}
-          <div className="border-t border-gray-200 pt-3 mt-3 space-y-2">
-            {isAuthenticated && user ? (
-              <div className="relative">
-                <motion.button
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center gap-2 text-gray-700 hover:text-[#6F4E37] transition-colors text-sm"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-amber-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                    {user.username?.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span>{user.username}</span>
-                    {isEmailVerified ? (
-                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                        Verified
-                      </span>
-                    ) : (
-                      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
-                        Unverified
-                      </span>
-                    )}
-                  </div>
-                </motion.button>
-
-                <AnimatePresence>
-                  {isProfileOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 z-60"
+                {/* Header with close button */}
+                <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                  <h2 className="text-lg font-semibold text-gray-800">Menu</h2>
+                  <button
+                    onClick={() => setIsMenuOpen(false)}
+                    className="text-gray-600 hover:text-gray-900 focus:outline-none"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                      className="w-6 h-6"
                     >
-                      <Link to="/dashboard" onClick={() => setIsProfileOpen(false)}>
-                        <div className="px-4 py-3 hover:bg-gray-50 border-b border-gray-200 cursor-pointer">
-                          <p className="font-semibold text-gray-800">Dashboard</p>
-                          <p className="text-xs text-gray-500">{user.email}</p>
-                        </div>
-                      </Link>
-                      <Link to="/dashboard?tab=orders" onClick={() => setIsProfileOpen(false)}>
-                        <div className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-gray-700">
-                          My Orders
-                        </div>
-                      </Link>
-                      <Link to="/dashboard?tab=settings" onClick={() => setIsProfileOpen(false)}>
-                        <div className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-gray-700">
-                          Settings
-                        </div>
-                      </Link>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Scrollable content */}
+                <div className="flex-1 overflow-y-auto px-4 py-6 space-y-3">
+                  {/* Categories */}
+                  <div className="space-y-2">
+                    <p className="px-4 py-2 font-semibold text-gray-700">Categories</p>
+                    {categories.map((category) => (
                       <button
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 font-semibold border-t border-gray-200"
+                        key={category._id}
+                        onClick={() => handleCategoryClick(category.slug)}
+                        className="block w-full text-left px-4 py-2 text-gray-700 hover:text-[#6F4E37] hover:bg-gray-50 rounded transition-colors flex items-center gap-3"
                       >
-                        Logout
+                        {category.image ? (
+                          <img
+                            src={category.image}
+                            alt={category.name}
+                            className="w-6 h-6 object-cover rounded"
+                          />
+                        ) : (
+                          <div className="w-6 h-6 bg-green-100 rounded flex items-center justify-center">
+                            <span className="text-green-600 text-xs font-bold">C</span>
+                          </div>
+                        )}
+                        <span>{category.name}</span>
                       </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ) : (
-              <Link to="/login">
-                <motion.button
-                  className="hidden max-md:flex my-4 items-center gap-2 bg-[#6F4E37] text-white py-2 px-8 rounded text-xl"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <MdLogin size={20} />
-                  <span>Login</span>
-                </motion.button>
-              </Link>
-            )}
-            <motion.button className="block w-full text-left px-4 py-2 text-gray-700 hover:text-[#6F4E37] transition-colors">
-              <MdLocalOffer className="inline mr-2" /> Daily Deals
-            </motion.button>
-          </div>
-        </div>
-      </motion.div>
-    </>
-  )}
-</AnimatePresence>
+                    ))}
+                  </div>
+
+                  {/* Other Navigation Links */}
+                  {navLinks.map((link, index) => (
+                    <Link key={index} to={link.href} onClick={() => setIsMenuOpen(false)}>
+                      <motion.div
+                        className="block w-full text-left px-4 py-2 text-gray-700 hover:text-[#6F4E37] hover:bg-gray-50 rounded transition-colors"
+                        whileHover={{ scale: 1.02 }}
+                      >
+                        {link.label}
+                      </motion.div>
+                    </Link>
+                  ))}
+
+                  {/* Additional Mobile Menu Items */}
+                  <div className="border-t border-gray-200 pt-3 mt-3 space-y-2">
+                    {isAuthenticated && user ? (
+                      <div className="relative">
+                        <motion.button
+                          onClick={() => setIsProfileOpen(!isProfileOpen)}
+                          className="flex items-center gap-2 text-gray-700 hover:text-[#6F4E37] transition-colors text-sm"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.97 }}
+                        >
+                          <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-amber-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            {user.username?.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span>{user.username}</span>
+                            {isEmailVerified ? (
+                              <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                                Verified
+                              </span>
+                            ) : (
+                              <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
+                                Unverified
+                              </span>
+                            )}
+                          </div>
+                        </motion.button>
+
+                        <AnimatePresence>
+                          {isProfileOpen && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 z-60"
+                            >
+                              <Link to="/dashboard" onClick={() => setIsProfileOpen(false)}>
+                                <div className="px-4 py-3 hover:bg-gray-50 border-b border-gray-200 cursor-pointer">
+                                  <p className="font-semibold text-gray-800">Dashboard</p>
+                                  <p className="text-xs text-gray-500">{user.email}</p>
+                                </div>
+                              </Link>
+                              <Link to="/dashboard?tab=orders" onClick={() => setIsProfileOpen(false)}>
+                                <div className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-gray-700">
+                                  My Orders
+                                </div>
+                              </Link>
+                              <Link to="/dashboard?tab=settings" onClick={() => setIsProfileOpen(false)}>
+                                <div className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-gray-700">
+                                  Settings
+                                </div>
+                              </Link>
+                              <button
+                                onClick={handleLogout}
+                                className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 font-semibold border-t border-gray-200"
+                              >
+                                Logout
+                              </button>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    ) : (
+                      <Link to="/login">
+                        <motion.button
+                          className="hidden max-md:flex my-4 items-center gap-2 bg-[#6F4E37] text-white py-2 px-8 rounded text-xl"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <MdLogin size={20} />
+                          <span>Login</span>
+                        </motion.button>
+                      </Link>
+                    )}
+                    <motion.button className="block w-full text-left px-4 py-2 text-gray-700 hover:text-[#6F4E37] transition-colors">
+                      <MdLocalOffer className="inline mr-2" /> Daily Deals
+                    </motion.button>
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
 
       </nav>
     </>

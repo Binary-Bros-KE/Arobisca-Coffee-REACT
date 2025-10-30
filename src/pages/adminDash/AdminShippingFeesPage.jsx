@@ -7,13 +7,15 @@ import AdminSidebar from "./components/AdminSidebar"
 import toast from "react-hot-toast"
 import { Loader } from "lucide-react"
 
+const API_URL = import.meta.env.VITE_SERVER_URL
+
 export default function AdminShippingFeesPage() {
     const [shippingFees, setShippingFees] = useState([])
     const [loading, setLoading] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [editingFee, setEditingFee] = useState(null)
 
-    const API_URL = "http://localhost:3000/shipping-fees"
+    const API_URL = `${API_URL}/shipping-fees`
 
     // Fetch all fees
     const fetchFees = async () => {

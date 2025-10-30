@@ -5,6 +5,9 @@ import { X, Loader, CheckCircle } from "lucide-react"
 import toast from "react-hot-toast"
 import { motion } from "framer-motion"
 
+const API_URL = import.meta.env.VITE_SERVER_URL
+const VITE_SOCKET_URL = import.meta.env.VITE_SOCKET_URL
+
 export default function MpesaPayment({ onClose, total, setTransactionData, setPaymentStatus, handleOrderSubmit }) {
   const [phone, setPhone] = useState("")
   const [checkoutRequestId, setCheckoutRequestId] = useState("")
@@ -18,8 +21,8 @@ export default function MpesaPayment({ onClose, total, setTransactionData, setPa
   const wsRef = useRef(null)
   const resendTimerRef = useRef(null)
 
-  const serverURL = "http://localhost:3000"
-  const socketURL = "ws://localhost:3000"
+  const serverURL = `${API_URL}`
+  const socketURL = `${VITE_SOCKET_URL}`
 
   // Countdown timer for resend button
   useEffect(() => {

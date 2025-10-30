@@ -1,17 +1,63 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchProducts } from "../../../redux/slices/productsSlice"
 import { fetchCategories } from "../../../redux/slices/categoriesSlice"
 import ProductCard from "../../../components/ProductCard"
 import { Link } from "react-router-dom"
 import { motion } from "framer-motion"
+import { FaShippingFast } from "react-icons/fa"
+import { BiSupport } from "react-icons/bi"
+import { MdOutlineCoffeeMaker } from "react-icons/md"
+import BenefitsSection from "../../../components/BenefitsSection"
 
 export default function ProductsGrid() {
   const dispatch = useDispatch()
   const { items: products, loading: productsLoading } = useSelector((state) => state.products)
   const { items: categories } = useSelector((state) => state.categories)
+
+  const shuffledProductsRef = useRef(null)
+
+  // Memoize the shuffled and distributed products
+  const { dailyDeals, newArrivals, bestSellers } = useMemo(() => {
+    // If we already shuffled, return the cached version
+    if (shuffledProductsRef.current) {
+      return shuffledProductsRef.current
+    }
+
+    // Only shuffle if we have products
+    if (products.length === 0) {
+      return { dailyDeals: [], newArrivals: [], bestSellers: [] }
+    }
+
+    // Fisher-Yates shuffle algorithm
+    const shuffleArray = (array) => {
+      const shuffled = [...array]
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+      }
+      return shuffled
+    }
+
+    // Shuffle all products once
+    const shuffled = shuffleArray(products)
+
+    // Distribute products without repetition
+    const result = {
+      dailyDeals: shuffled.slice(0, 8),
+      newArrivals: shuffled.slice(8, 16),
+      bestSellers: shuffled.slice(16, 24)
+    }
+
+    // Cache the result so it doesn't change on re-renders
+    shuffledProductsRef.current = result
+
+    return result
+  }, [products.length])
+
+
 
   useEffect(() => {
     if (products.length === 0) {
@@ -22,14 +68,7 @@ export default function ProductsGrid() {
     }
   }, [dispatch, products.length, categories.length])
 
-  // Get featured products (first 8)
-  const featuredProducts = products.slice(0, 8)
 
-  // Get new arrivals (last 4)
-  const newArrivals = products.slice(-4)
-
-  // Get best sellers (random 4 for demo)
-  const bestSellers = products.slice(4, 8)
 
   return (
     <div className="min-h-screen bg-white">
@@ -51,13 +90,13 @@ export default function ProductsGrid() {
           </div>
 
           {/* Products Grid */}
-          {productsLoading && featuredProducts.length === 0 ? (
+          {productsLoading && dailyDeals.length === 0 ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProducts.map((product) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 max-md:gap-2">
+              {dailyDeals.map((product) => (
                 <ProductCard key={product._id} product={product} />
               ))}
             </div>
@@ -66,8 +105,9 @@ export default function ProductsGrid() {
       </section>
 
       {/* Promotional Banner */}
-      <section className="py-12 px-4 md:px-8 bg-gradient-to-r from-green-600 to-green-700">
-        <div className="max-w-7xl mx-auto">
+      <section className="relative py-12 px-4 md:px-8 bg-[url('/coffee-products-mobile.jpg')] bg-center bg-cover">
+        <div className="absolute inset-0 bg-black/70"></div>
+        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -105,7 +145,7 @@ export default function ProductsGrid() {
           </div>
 
           {/* Products Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 max-md:gap-2">
             {newArrivals.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
@@ -130,7 +170,7 @@ export default function ProductsGrid() {
           </div>
 
           {/* Products Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 max-md:gap-2">
             {bestSellers.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
@@ -138,43 +178,7 @@ export default function ProductsGrid() {
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="py-12 px-4 md:px-8 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Free Shipping",
-                description: "On orders over 2000",
-                icon: "🚚",
-              },
-              {
-                title: "24/7 Support",
-                description: "Dedicated customer service",
-                icon: "💬",
-              },
-              {
-                title: "Money Back",
-                description: "30-day guarantee",
-                icon: "💰",
-              },
-            ].map((benefit, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="text-center p-6 bg-white rounded-lg shadow-md"
-              >
-                <div className="text-4xl mb-4">{benefit.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{benefit.title}</h3>
-                <p className="text-gray-600">{benefit.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <BenefitsSection />
     </div>
   )
 }

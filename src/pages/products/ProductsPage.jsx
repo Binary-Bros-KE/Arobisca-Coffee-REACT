@@ -1,23 +1,29 @@
 "use client"
 
-import { useEffect, useState, useMemo } from "react"
+import { useEffect, useState, useMemo, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useSearchParams } from "react-router-dom"
+import { useParams, useSearchParams } from "react-router-dom"
 import { fetchProducts } from "../../redux/slices/productsSlice"
 import { fetchCategories } from "../../redux/slices/categoriesSlice"
 import ProductCard from "../../components/ProductCard"
 import ProductFilters from "./components/ProductFilters"
 import Breadcrumb from "../../components/Breadcrumb"
+import BenefitsSection from "../../components/BenefitsSection"
 
 export default function ProductsPage() {
   const dispatch = useDispatch()
   const [searchParams] = useSearchParams()
-  const categoryId = searchParams.get("category")
+  const { categorySlug } = useParams()
 
+  const categoryId = searchParams.get("category")
   const { items: products, loading: productsLoading } = useSelector((state) => state.products)
   const { items: categories } = useSelector((state) => state.categories)
-  const [filters, setFilters] = useState({ category: categoryId || "", priceRange: null })
+  const [filters, setFilters] = useState({ category: categoryId || "", priceRange: { min: "", max: "" } })
   const [sortBy, setSortBy] = useState("newest")
+  const [showFilters, setShowFilters] = useState(false)
+
+  const hasShuffledRef = useRef(false)
+  const shuffledProductsRef = useRef([])
 
   // Fetch data on mount
   useEffect(() => {
@@ -31,32 +37,62 @@ export default function ProductsPage() {
 
   // Update filter when category param changes
   useEffect(() => {
-    if (categoryId) {
-      setFilters((prev) => ({ ...prev, category: categoryId }))
+    if (categorySlug) {
+      setFilters((prev) => ({ ...prev, category: categorySlug }))
+    } else if (categoryId) {
+      // If categoryId from searchParams, find the slug
+      const category = categories.find((cat) => cat._id === categoryId)
+      if (category) {
+        setFilters((prev) => ({ ...prev, category: category.slug }))
+      }
+    } else {
+      setFilters((prev) => ({ ...prev, category: "" }))
     }
-  }, [categoryId])
+  }, [categorySlug, categoryId, categories])
 
-  // Filter and sort products
+  // Shuffle products once on initial load
+  useEffect(() => {
+    if (products.length > 0 && !hasShuffledRef.current) {
+      // Fisher-Yates shuffle algorithm
+      const shuffleArray = (array) => {
+        const shuffled = [...array]
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+        }
+        return shuffled
+      }
+
+      shuffledProductsRef.current = shuffleArray(products)
+      hasShuffledRef.current = true
+    }
+  }, [products])
+
+  // Use shuffled products or original if not shuffled yet
+  const displayProducts = hasShuffledRef.current ? shuffledProductsRef.current : products
+
+  // Filter and sort the shuffled products
   const filteredProducts = useMemo(() => {
-    let result = [...products]
+    let result = [...displayProducts]
 
-    // Filter by category
+    // Filter by category using SLUG
     if (filters.category) {
-      // First try to find category by slug
       const categoryBySlug = categories.find((cat) => cat.slug === filters.category)
       if (categoryBySlug) {
         result = result.filter((product) => product.proCategoryId?._id === categoryBySlug._id)
-      } else {
-        // Fallback to ID-based filtering for backward compatibility
-        result = result.filter((product) => product.proCategoryId?._id === filters.category)
       }
     }
 
-    // Filter by price range
+    // Filter by price range with custom min/max
     if (filters.priceRange) {
+      const minPrice = parseFloat(filters.priceRange.min)
+      const maxPrice = parseFloat(filters.priceRange.max)
+
       result = result.filter((product) => {
         const price = product.offerPrice || product.price
-        return price >= filters.priceRange.min && price <= filters.priceRange.max
+        const meetsMin = !filters.priceRange.min || price >= minPrice
+        const meetsMax = !filters.priceRange.max || price <= maxPrice
+        return meetsMin && meetsMax
       })
     }
 
@@ -75,9 +111,10 @@ export default function ProductsPage() {
     }
 
     return result
-  }, [products, filters, sortBy])
+  }, [displayProducts, categories, filters, sortBy])
 
-  const selectedCategory = categories.find((cat) => cat._id === filters.category)
+  // Get selected category by SLUG instead of ID
+  const selectedCategory = categories.find((cat) => cat.slug === filters.category)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -110,7 +147,24 @@ export default function ProductsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Filters Sidebar */}
             <div className="lg:col-span-1">
-              <ProductFilters categories={categories} onFilterChange={setFilters} selectedCategory={filters.category} />
+              {/* Mobile Filter Toggle Button */}
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="lg:hidden w-full mb-4 px-4 py-3 bg-amber-600 text-white rounded-lg font-semibold flex items-center justify-between"
+              >
+                <span>Filters</span>
+                <span>{showFilters ? "▲" : "▼"}</span>
+              </button>
+
+              {/* Filters - Collapsible on mobile */}
+              <div className={`${showFilters ? "block" : "hidden"} lg:block`}>
+                <ProductFilters
+                  categories={categories}
+                  onFilterChange={setFilters}
+                  selectedCategory={filters.category}
+                  priceRange={filters.priceRange}
+                />
+              </div>
             </div>
 
             {/* Products Grid */}
@@ -124,14 +178,17 @@ export default function ProductsPage() {
                   <p className="text-gray-600 text-lg">No products found</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-md:gap-2">
                   {filteredProducts.map((product) => (
                     <ProductCard key={product._id} product={product} />
                   ))}
                 </div>
               )}
             </div>
+
           </div>
+
+          <BenefitsSection />
         </div>
       </div>
     </div>

@@ -30,7 +30,7 @@ export default function CategoriesSlider() {
   }
 
   return (
-    <section className="py-12 px-4 md:px-8 bg-white">
+    <section className="py-6 px-4 md:px-8 bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="flex items-center gap-3 mb-8">
@@ -41,25 +41,13 @@ export default function CategoriesSlider() {
         </div>
 
         {/* Swiper */}
-        <Swiper
-          modules={[Navigation, Pagination]}
-          navigation
-          pagination={{ clickable: true }}
-          spaceBetween={20}
-          breakpoints={{
-            320: { slidesPerView: 1 },
-            640: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
-            1280: { slidesPerView: 4 },
-          }}
-          className="categories-swiper"
-        >
+        <div className="grid max-md:grid-cols-2 grid-cols-6 gap-2">
           {categories.map((category) => (
             <SwiperSlide key={category._id}>
-              <Link to={`/products?category=${category._id}`}>
+              <Link to={`/products/${category.slug}`}>
                 <motion.div
                   whileHover={{ scale: 1.05 }}
-                  className="relative h-48 md:h-56 rounded-lg overflow-hidden cursor-pointer group"
+                  className="relative h-18 md:h-26 rounded-lg overflow-hidden cursor-pointer group"
                 >
                   {/* Background Image */}
                   <img
@@ -70,13 +58,13 @@ export default function CategoriesSlider() {
 
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
-                    <h3 className="text-white text-xl md:text-2xl font-bold text-center px-4">{category.name}</h3>
+                    <h3 className="text-white text-md font-semibold md:text-2xl md:font-bold  text-center px-4">{category.name}</h3>
                   </div>
                 </motion.div>
               </Link>
             </SwiperSlide>
           ))}
-        </Swiper>
+        </div>
       </div>
     </section>
   )

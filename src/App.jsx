@@ -36,6 +36,8 @@ import AdminCouponsPage from "./pages/adminDash/AdminCouponsPage"
 import AdminOrdersPage from "./pages/adminDash/AdminOrdersPage"
 import AdminUsersPage from "./pages/adminDash/AdminUsersPage"
 import ScrollToTop from "./services/ScrollToTop"
+import AboutUsPage from "./pages/about/AboutUsPage"
+import ContactPage from "./pages/contact/ContactPage"
 
 
 function App() {
@@ -49,7 +51,10 @@ function App() {
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/about" element={<AboutUsPage />} />
+              <Route path="/contact" element={<ContactPage />} />
               <Route path="/products" element={<ProductsPage />} />
+              <Route path="/products/:categorySlug" element={<ProductsPage />} />
               <Route path="/product/:productId" element={<ProductDetailsPage />} />
 
               {/* Auth Routes */}

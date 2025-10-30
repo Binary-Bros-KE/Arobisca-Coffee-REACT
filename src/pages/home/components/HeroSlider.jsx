@@ -21,8 +21,7 @@ const PLACEHOLDER_SLIDERS = [
         description:
             "Browse through our diverse range of meticulously crafted coffee products, designed to bring out your individuality and cater to your sense of style.",
         buttonText: "Shop Now",
-        href: "",
-        buttonLink: "/shop",
+        buttonLink: "/products/coffee",
         largeImage: "/hero-sliders/coffee-1.jpg",
         smallImage: "/hero-sliders/coffee-1.jpg",
     },
@@ -33,8 +32,7 @@ const PLACEHOLDER_SLIDERS = [
         description:
             "Discover our curated selection of professional-grade coffee machines that bring café quality to your home.",
         buttonText: "Explore Machines",
-        href: "",
-        buttonLink: "/machines",
+        buttonLink: "/products/machines",
         largeImage: "/coffee-machines-showcase.jpg",
         smallImage: "/coffee-machine-mobile.jpg",
     },
@@ -44,8 +42,7 @@ const PLACEHOLDER_SLIDERS = [
         title: "Essential Coffee Accessories",
         description: "Complete your coffee experience with our handpicked collection of premium accessories and tools.",
         buttonText: "View Accessories",
-        href: "",
-        buttonLink: "/accessories",
+        buttonLink: "/products/accessories",
         largeImage: "/coffee-accessories-collection.jpg",
         smallImage: "/coffee-accessories-mobile.jpg",
     },
@@ -114,7 +111,7 @@ export default function HeroSlider() {
                                     initial={{ opacity: 0 }}
                                     whileInView={{ opacity: 1 }}
                                     transition={{ delay: 0.2, duration: 0.6 }}
-                                    className="text-sm max-md:text-xs md:text-md font-semibold text-amber-600 mb-2 max-md:mb-2 tracking-widest uppercase"
+                                    className="text-sm max-md:text-xs md:text-md font-semibold text-amber-600 mb-2 max-md:mb-4 tracking-widest uppercase"
                                 >
                                     {slider.smallText}
                                 </motion.p>
@@ -138,7 +135,7 @@ export default function HeroSlider() {
                                     initial={{ opacity: 0 }}
                                     whileInView={{ opacity: 1 }}
                                     transition={{ delay: 0.4, duration: 0.6 }}
-                                    className="text-sm max-md:text-xs md:text-lg text-gray-300 mb-6 max-md:mb-2 leading-relaxed max-w-xl"
+                                    className="text-sm max-md:text-xs md:text-lg text-gray-300 mb-6 max-md:mb-4 leading-relaxed max-w-xl"
                                 >
                                     {slider.description}
                                 </motion.p>

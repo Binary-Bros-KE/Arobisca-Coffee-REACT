@@ -1,12 +1,14 @@
 // redux/slices/dashboardSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
+const API_URL = import.meta.env.VITE_SERVER_URL
+
 // Async thunk for fetching dashboard stats
 export const fetchDashboardStats = createAsyncThunk(
   "dashboard/fetchDashboardStats",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:3000/dashboard/stats/overview")
+      const response = await fetch(`${API_URL}/dashboard/stats/overview`)
       const data = await response.json()
       
       if (!response.ok) throw new Error(data.message || "Failed to fetch dashboard stats")

@@ -9,6 +9,8 @@ import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi"
 import toast from "react-hot-toast"
 import { Loader } from "lucide-react"
 
+const API_URL = import.meta.env.VITE_SERVER_URL
+
 export default function AdminCategoriesPage() {
   const dispatch = useDispatch()
   const { items: categories, loading } = useSelector((state) => state.categories)
@@ -27,7 +29,7 @@ export default function AdminCategoriesPage() {
   const handleDelete = async (categoryId) => {
     if (window.confirm("Are you sure you want to delete this category?")) {
       try {
-        const response = await fetch(`http://localhost:3000/categories/${categoryId}`, {
+        const response = await fetch(`${API_URL}/categories/${categoryId}`, {
           method: "DELETE",
         })
         const data = await response.json()

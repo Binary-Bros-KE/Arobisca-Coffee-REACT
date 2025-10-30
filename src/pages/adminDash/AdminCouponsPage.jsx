@@ -9,6 +9,8 @@ import { fetchProducts } from "../../redux/slices/productsSlice"
 import { useDispatch } from "react-redux"
 import { Loader } from "lucide-react"
 
+const API_URL = import.meta.env.VITE_SERVER_URL
+
 export default function AdminCouponsPage() {
   const dispatch = useDispatch()
   const [coupons, setCoupons] = useState([])
@@ -16,7 +18,7 @@ export default function AdminCouponsPage() {
   const [showModal, setShowModal] = useState(false)
   const [editingCoupon, setEditingCoupon] = useState(null)
 
-  const API_URL = "http://localhost:3000/couponCodes"
+  const API_URL = `${API_URL}/couponCodes`
 
   useEffect(() => {
     dispatch(fetchCategories())
@@ -268,8 +270,8 @@ function CouponFormModal({ coupon, onClose, onSave }) {
       setLoading(true)
       try {
         const [categoriesRes, productsRes] = await Promise.all([
-          fetch('http://localhost:3000/categories'),
-          fetch('http://localhost:3000/products')
+          fetch(`${API_URL}/categories`),
+          fetch(`${API_URL}/products`)
         ])
 
         const categoriesData = await categoriesRes.json()

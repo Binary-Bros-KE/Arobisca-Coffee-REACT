@@ -5,6 +5,8 @@ import { motion } from "framer-motion"
 import { FiX } from "react-icons/fi"
 import toast from "react-hot-toast"
 
+const API_URL = import.meta.env.VITE_SERVER_URL
+
 export default function CategoryFormModal({ category, onClose, onSave }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -73,7 +75,7 @@ export default function CategoryFormModal({ category, onClose, onSave }) {
         formDataToSend.append("img", image)
       }
 
-      const url = category ? `http://localhost:3000/categories/${category._id}` : "http://localhost:3000/categories"
+      const url = category ? `${API_URL}/categories/${category._id}` : `${API_URL}/categories`
       const method = category ? "PUT" : "POST"
 
       const response = await fetch(url, {

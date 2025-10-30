@@ -38,16 +38,22 @@ export default function ProductCard({ product }) {
       whileHover={{ y: -8 }}
       className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
     >
-      {/* Image Container */}
-      <Link to={`/product/${product._id}`} className="relative overflow-hidden bg-gray-100 h-64">
+      <div className="relative overflow-hidden">
+        {/* Image Container */}
         {product.images && product.images.length > 0 ? (
-          <img
-            src={product.images[0].url || "/placeholder.svg"}
-            alt={product.name}
-            className="w-full h-60 object-cover hover:scale-110 transition-transform duration-300"
-          />
+          <Link to={`/product/${product._id}`} className="">
+
+            <img
+              src={product.images[0].url || "/placeholder.svg"}
+              alt={product.name}
+              className="w-full h-60 max-md:h-40 object-cover hover:scale-110 transition-transform duration-300"
+            />
+          </Link>
+
         ) : (
-          <div className="w-full flex items-center justify-center bg-gray-200 text-gray-400">No Image</div>
+          <Link to={`/product/${product._id}`} className="">
+            <div className="w-full flex items-center justify-center bg-gray-200 text-gray-400">No Image</div>
+          </Link>
         )}
 
         {/* Discount Badge */}
@@ -62,16 +68,15 @@ export default function ProductCard({ product }) {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleToggleFavorite}
-          className={`absolute top-3 left-3 p-2 rounded-full transition-colors ${
-            isFavorite ? "bg-red-500 text-white" : "bg-white text-gray-600 hover:bg-gray-100"
-          }`}
+          className={`absolute top-3 left-3 p-2 rounded-full transition-colors ${isFavorite ? "bg-red-500 text-white" : "bg-white text-gray-600 hover:bg-gray-100"
+            }`}
         >
           <FaRegHeart size={18} fill={isFavorite ? "currentColor" : "currentColor"} />
         </motion.button>
-      </Link>
+      </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="p-4 max-md:p-2">
         {/* Category */}
         <p className="text-xs text-green-600 font-semibold uppercase mb-1">
           {product.proCategoryId?.name || "Product"}
@@ -79,7 +84,7 @@ export default function ProductCard({ product }) {
 
         {/* Product Name */}
         <Link to={`/product/${product._id}`}>
-          <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 hover:text-green-600 transition-colors">
+          <h3 className="text-sm md:text-lg font-semibold text-gray-800 line-clamp-2 hover:text-green-600 transition-colors">
             {product.name}
           </h3>
         </Link>
@@ -93,40 +98,38 @@ export default function ProductCard({ product }) {
               </span>
             ))}
           </div>
-          <span className="text-xs text-gray-500">(0)</span>
         </div>
 
         {/* Price */}
-      <div className="flex items-center gap-2 mb-3">
-  {product.offerPrice ? (
-    <>
-      <span className="text-lg font-bold text-gray-900">
-        Kes {product.offerPrice.toLocaleString('en-KE')}
-      </span>
-      <span className="text-sm text-gray-500 line-through">
-        Kes {product.price.toLocaleString('en-KE')}
-      </span>
-    </>
-  ) : (
-    <span className="text-lg font-bold text-gray-900">
-      Kes {product.price.toLocaleString('en-KE')}
-    </span>
-  )}
-</div>
+        <div className="flex items-center gap-2 mb-3">
+          {product.offerPrice ? (
+            <>
+              <span className="text-lg font-bold text-gray-900">
+                Kes {product.offerPrice.toLocaleString('en-KE')}
+              </span>
+              <span className="text-sm text-gray-500 line-through">
+                Kes {product.price.toLocaleString('en-KE')}
+              </span>
+            </>
+          ) : (
+            <span className="text-lg font-bold text-gray-900">
+              Kes {product.price.toLocaleString('en-KE')}
+            </span>
+          )}
+        </div>
 
         {/* Add to Cart Button */}
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleAddToCart}
-          className={`w-full py-2 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-            isAdded ? "bg-green-600 text-white" : "bg-amber-600 text-white hover:bg-amber-700"
-          }`}
+          className={`w-full py-2 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${isAdded ? "bg-green-600 text-white" : "bg-amber-600 text-white hover:bg-amber-700 cursor-pointer"
+            }`}
         >
           <CgShoppingCart size={16} />
           {isAdded ? "Added!" : "Add to Cart"}
         </motion.button>
       </div>
-    </motion.div>
+    </motion.div >
   )
 }

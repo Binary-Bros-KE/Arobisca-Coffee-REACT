@@ -1,12 +1,13 @@
 // Updated Redux slice - ordersSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+const API_URL = import.meta.env.VITE_SERVER_URL
 
 // Fetch ALL orders at once
 export const fetchAllOrders = createAsyncThunk(
   "orders/fetchAllOrders",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:3000/orders?limit=1000")
+      const response = await fetch(`${API_URL}/orders?limit=1000`)
       const data = await response.json()
 
       if (!response.ok) throw new Error(data.message || "Failed to fetch orders")
@@ -22,7 +23,7 @@ export const updateOrderStatus = createAsyncThunk(
   "orders/updateOrderStatus",
   async ({ orderId, orderStatus, adminNotes }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://localhost:3000/orders/${orderId}/status`, {
+      const response = await fetch(`${API_URL}/orders/${orderId}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderStatus, adminNotes }),
@@ -42,7 +43,7 @@ export const updatePaymentStatus = createAsyncThunk(
   "orders/updatePaymentStatus",
   async ({ orderId, paymentStatus }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://localhost:3000/orders/${orderId}/payment-status`, {
+      const response = await fetch(`${API_URL}/orders/${orderId}/payment-status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ paymentStatus }),
@@ -62,7 +63,7 @@ export const fetchOrderStats = createAsyncThunk(
   "orders/fetchOrderStats",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:3000/orders/stats/overview")
+      const response = await fetch(`${API_URL}/orders/stats/overview`)
       const data = await response.json()
 
       if (!response.ok) throw new Error(data.message || "Failed to fetch stats")
@@ -79,7 +80,7 @@ export const fetchUserOrders = createAsyncThunk(
   "orders/fetchUserOrders",
   async (userId, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://localhost:3000/orders/user/${userId}`)
+      const response = await fetch(`${API_URL}/orders/user/${userId}`)
       const data = await response.json()
 
       if (!response.ok) throw new Error(data.message || "Failed to fetch user orders")

@@ -13,6 +13,8 @@ import { LiaShippingFastSolid } from "react-icons/lia"
 import { GoCreditCard } from "react-icons/go"
 import { FaRegNoteSticky } from "react-icons/fa6"
 
+const API_URL = import.meta.env.VITE_SERVER_URL
+
 export default function CheckoutPage() {
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
@@ -90,7 +92,7 @@ export default function CheckoutPage() {
 
   const fetchShippingMethods = async () => {
     try {
-      const response = await fetch("http://localhost:3000/shipping-fees") // ✅ match your backend route
+      const response = await fetch(`${API_URL}/shipping-fees`) // ✅ match your backend route
       const data = await response.json()
       console.log(`Shipping`, data);
       if (data.success) {
@@ -135,7 +137,7 @@ export default function CheckoutPage() {
       const productIds = cartItems.map(item => item._id)
       const purchaseAmount = totalPrice
 
-      const response = await fetch("http://localhost:3000/couponCodes/check-coupon", {
+      const response = await fetch(`${API_URL}/couponCodes/check-coupon`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -237,7 +239,7 @@ export default function CheckoutPage() {
 
       console.log('🔄 Sending order data to server:', orderData)
 
-      const response = await fetch("http://localhost:3000/orders", {
+      const response = await fetch(`${API_URL}/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),

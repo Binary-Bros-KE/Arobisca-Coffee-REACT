@@ -10,6 +10,8 @@ import toast from "react-hot-toast"
 import { fetchCategories } from "../../redux/slices/categoriesSlice"
 import { Loader } from "lucide-react"
 
+const API_URL = import.meta.env.VITE_SERVER_URL
+
 export default function AdminProductsPage() {
   const dispatch = useDispatch()
   const { items: products, loading } = useSelector((state) => state.products)
@@ -32,7 +34,7 @@ export default function AdminProductsPage() {
   const handleDelete = async (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        const response = await fetch(`http://localhost:3000/products/${productId}`, {
+        const response = await fetch(`${API_URL}/products/${productId}`, {
           method: "DELETE",
         })
         if (response.ok) {

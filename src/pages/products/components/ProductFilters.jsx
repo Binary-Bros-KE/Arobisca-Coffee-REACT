@@ -1,96 +1,135 @@
-"use client"
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { BiChevronDown } from "react-icons/bi"
+export default function ProductFilters({ categories, onFilterChange, selectedCategory, priceRange }) {
+  const navigate = useNavigate()
+  const [localMinPrice, setLocalMinPrice] = useState(priceRange?.min || "")
+  const [localMaxPrice, setLocalMaxPrice] = useState(priceRange?.max || "")
 
-export default function ProductFilters({ categories, onFilterChange, selectedCategory }) {
-  const [expandedFilters, setExpandedFilters] = useState({
-    category: true,
-    price: true,
-  })
+  // Sync local state with parent when priceRange prop changes
+  useEffect(() => {
+    setLocalMinPrice(priceRange?.min || "")
+    setLocalMaxPrice(priceRange?.max || "")
+  }, [priceRange])
 
-  const priceRanges = [
-    { label: "Under 500", min: 0, max: 500 },
-    { label: "500 - 1000", min: 500, max: 1000 },
-    { label: "1000 - 2000", min: 1000, max: 2000 },
-    { label: "2000+", min: 2000, max: Number.POSITIVE_INFINITY },
-  ]
+  const handleCategoryChange = (categorySlug) => {
+    onFilterChange((prev) => ({ ...prev, category: categorySlug }))
+    // Update URL to match selected category
+    if (categorySlug) {
+      navigate(`/products/${categorySlug}`)
+    } else {
+      navigate("/products")
+    }
+  }
 
-  const toggleFilter = (filter) => {
-    setExpandedFilters((prev) => ({
+  const handlePriceChange = () => {
+    onFilterChange((prev) => ({
       ...prev,
-      [filter]: !prev[filter],
+      priceRange: {
+        min: localMinPrice,
+        max: localMaxPrice,
+      },
+    }))
+  }
+
+  const handleClearPrice = () => {
+    setLocalMinPrice("")
+    setLocalMaxPrice("")
+    onFilterChange((prev) => ({
+      ...prev,
+      priceRange: { min: "", max: "" },
     }))
   }
 
   return (
-    <div className="bg-white rounded-lg p-6 h-fit sticky top-20">
-      <h3 className="text-lg font-bold text-gray-900 mb-6">Filters</h3>
-
-      {/* Category Filter */}
-      <div className="mb-6">
-        <button onClick={() => toggleFilter("category")} className="flex items-center justify-between w-full mb-3">
-          <h4 className="font-semibold text-gray-800">Category</h4>
-          <motion.div animate={{ rotate: expandedFilters.category ? 180 : 0 }}>
-            <BiChevronDown size={16} />
-          </motion.div>
-        </button>
-
-        {expandedFilters.category && (
-          <div className="space-y-2">
-            <label className="flex items-center gap-2 cursor-pointer">
+    <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
+      {/* Categories Filter */}
+      <div>
+        <h3 className="font-semibold text-lg mb-4 text-gray-900">Categories</h3>
+        <div className="space-y-0">
+          <label className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded">
+            <input
+              type="radio"
+              name="category"
+              checked={!selectedCategory}
+              onChange={() => handleCategoryChange("")}
+              className="w-4 h-4 text-amber-600 focus:ring-amber-500"
+            />
+            <span className="text-gray-700">All Categories</span>
+          </label>
+          {categories.map((category) => (
+            <label
+              key={category._id}
+              className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded"
+            >
               <input
                 type="radio"
                 name="category"
-                value=""
-                checked={!selectedCategory}
-                onChange={() => onFilterChange({ category: "" })}
-                className="w-4 h-4 accent-amber-600"
+                checked={selectedCategory === category.slug}
+                onChange={() => handleCategoryChange(category.slug)}
+                className="w-4 h-4 text-amber-600 focus:ring-amber-500"
               />
-              <span className="text-gray-700">All Categories</span>
+              <span className="text-gray-700">{category.name}</span>
             </label>
-            {categories.map((cat) => (
-              <label key={cat._id} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="category"
-                  value={cat._id}
-                  checked={selectedCategory === cat._id}
-                  onChange={() => onFilterChange({ category: cat._id })}
-                  className="w-4 h-4 accent-amber-600"
-                />
-                <span className="text-gray-700">{cat.name}</span>
-              </label>
-            ))}
-          </div>
-        )}
+          ))}
+        </div>
       </div>
 
-      {/* Price Filter */}
+      {/* Price Range Filter */}
       <div>
-        <button onClick={() => toggleFilter("price")} className="flex items-center justify-between w-full mb-3">
-          <h4 className="font-semibold text-gray-800">Price Range</h4>
-          <motion.div animate={{ rotate: expandedFilters.price ? 180 : 0 }}>
-            <BiChevronDown size={16} />
-          </motion.div>
-        </button>
-
-        {expandedFilters.price && (
-          <div className="space-y-2">
-            {priceRanges.map((range, idx) => (
-              <label key={idx} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  onChange={() => onFilterChange({ priceRange: range })}
-                  className="w-4 h-4 accent-amber-600"
-                />
-                <span className="text-gray-700">{range.label}</span>
-              </label>
-            ))}
+        <h3 className="font-semibold text-lg mb-4 text-gray-900">Price Range</h3>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Min Price</label>
+            <input
+              type="number"
+              placeholder="0"
+              value={localMinPrice}
+              onChange={(e) => setLocalMinPrice(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600"
+              min="0"
+              step="0.01"
+            />
           </div>
-        )}
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Max Price</label>
+            <input
+              type="number"
+              placeholder="10000"
+              value={localMaxPrice}
+              onChange={(e) => setLocalMaxPrice(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600"
+              min="0"
+              step="0.01"
+            />
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handlePriceChange}
+              className="flex-1 bg-amber-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-amber-700 transition"
+            >
+              Apply
+            </button>
+            <button
+              onClick={handleClearPrice}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* Clear All Filters */}
+      <button
+        onClick={() => {
+          handleCategoryChange("")
+          handleClearPrice()
+        }}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition font-semibold"
+      >
+        Clear All Filters
+      </button>
     </div>
   )
 }

@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
+const API_URL = import.meta.env.VITE_SERVER_URL
+
 export const fetchCategories = createAsyncThunk("categories/fetchCategories", async (_, { rejectWithValue }) => {
   try {
-    const response = await fetch("http://localhost:3000/categories")
+    const response = await fetch(`${API_URL}/categories`)
     if (!response.ok) throw new Error("Failed to fetch categories")
     const data = await response.json()
     return {

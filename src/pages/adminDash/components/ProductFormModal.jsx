@@ -5,6 +5,8 @@ import { motion } from "framer-motion"
 import { FiX } from "react-icons/fi"
 import toast from "react-hot-toast"
 
+const API_URL = import.meta.env.VITE_SERVER_URL
+
 export default function ProductFormModal({ product, categories, onClose, onSave }) {
   console.log(`categories`, categories);
   
@@ -114,7 +116,7 @@ export default function ProductFormModal({ product, categories, onClose, onSave 
         formDataToSend.append(`image${key}`, file)
       })
 
-      const url = product ? `http://localhost:3000/products/${product._id}` : "http://localhost:3000/products"
+      const url = product ? `${API_URL}/products/${product._id}` : `${API_URL}/products`
       const method = product ? "PUT" : "POST"
 
       const response = await fetch(url, {

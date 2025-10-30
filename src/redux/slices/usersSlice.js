@@ -1,12 +1,14 @@
 // redux/slices/usersSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
+const API_URL = import.meta.env.VITE_SERVER_URL
+
 // Async thunk for fetching all users
 export const fetchAllUsers = createAsyncThunk(
   "users/fetchAllUsers",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:3000/users")
+      const response = await fetch(`${API_URL}/users`)
       const data = await response.json()
       
       if (!response.ok) throw new Error(data.message || "Failed to fetch users")
