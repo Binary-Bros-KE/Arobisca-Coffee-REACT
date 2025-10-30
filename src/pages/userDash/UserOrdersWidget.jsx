@@ -90,7 +90,7 @@ const UserOrdersWidget = ({ user }) => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="bg-white rounded-2xl shadow-lg p-8"
+      className="bg-white rounded-2xl shadow-lg p-8 max-md:p-4"
     >
       <h3 className="text-2xl font-bold text-gray-800 mb-6">Your Orders</h3>
 
@@ -148,7 +148,7 @@ const UserOrdersWidget = ({ user }) => {
                   <div>
                     <h5 className="font-medium text-gray-700 mb-2">Items ({order.items.length})</h5>
                     <div className="space-y-2">
-                      {order.items.slice(0, 3).map((item, index) => (
+                      {order.items.map((item, index) => (
                         <div key={index} className="flex items-center gap-3">
                           <img
                             src={item.image}
@@ -165,11 +165,6 @@ const UserOrdersWidget = ({ user }) => {
                           </div>
                         </div>
                       ))}
-                      {order.items.length > 3 && (
-                        <p className="text-sm text-gray-600">
-                          +{order.items.length - 3} more items
-                        </p>
-                      )}
                     </div>
                   </div>
 

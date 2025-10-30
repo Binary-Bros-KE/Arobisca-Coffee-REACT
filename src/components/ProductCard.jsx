@@ -104,10 +104,10 @@ export default function ProductCard({ product }) {
         <div className="flex items-center gap-2 mb-3">
           {product.offerPrice ? (
             <>
-              <span className="text-lg font-bold text-gray-900">
+              <span className="text-lg max-md:text-md font-bold text-gray-900">
                 Kes {product.offerPrice.toLocaleString('en-KE')}
               </span>
-              <span className="text-sm text-gray-500 line-through">
+              <span className="text-sm max-md:text-xs text-gray-500 line-through">
                 Kes {product.price.toLocaleString('en-KE')}
               </span>
             </>

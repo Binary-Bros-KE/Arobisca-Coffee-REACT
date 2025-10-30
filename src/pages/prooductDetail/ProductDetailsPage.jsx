@@ -110,7 +110,7 @@ Please let me know about availability and delivery details.`
       <div className="px-4 md:px-8 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Product Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white rounded-lg p-6 md:p-10 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white rounded-lg p-4 md:p-10 mb-12">
             {/* Image Section */}
             <div className="flex flex-col gap-4">
               {/* Main Image */}
@@ -287,7 +287,7 @@ Please let me know about availability and delivery details.`
 
           {/* Related Products Section */}
           {relatedProducts.length > 0 && (
-            <div className="bg-white rounded-lg p-6 md:p-10">
+            <div className="bg-white rounded-lg p-4 md:p-10">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
                 Related Products
               </h2>
@@ -303,7 +303,7 @@ Please let me know about availability and delivery details.`
                 }}
                 breakpoints={{
                   340: {
-                    slidesPerView: 2,
+                    slidesPerView: 1,
                   },
                   768: {
                     slidesPerView: 3,

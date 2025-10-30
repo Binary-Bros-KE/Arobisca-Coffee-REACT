@@ -303,7 +303,9 @@ export default function CheckoutPage() {
                     <MdOutlinePermContactCalendar className="w-6 h-6 text-amber-600" />
                     Contact Information
                   </div>
-                  <span className="text-primary text-xs font-light ">(Login to use saved info)</span>
+                  {!user && !isAuthenticated &&
+                    <span className="text-primary text-xs font-light ">(Login to use saved info)</span>
+                  }
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>

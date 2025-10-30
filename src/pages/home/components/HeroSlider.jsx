@@ -11,6 +11,7 @@ import "swiper/css/navigation"
 import "swiper/css/pagination"
 import { motion } from "framer-motion"
 import { FiArrowRight } from "react-icons/fi"
+import { useNavigate } from "react-router-dom"
 
 // Placeholder data for development
 const PLACEHOLDER_SLIDERS = [
@@ -50,6 +51,7 @@ const PLACEHOLDER_SLIDERS = [
 
 export default function HeroSlider() {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const { sliders, loading, error, lastFetch, cacheExpiry } = useSelector((state) => state.heroSlider)
     const [displaySliders, setDisplaySliders] = useState(PLACEHOLDER_SLIDERS)
 
@@ -70,6 +72,10 @@ export default function HeroSlider() {
             setDisplaySliders(sliders)
         }
     }, [sliders])
+
+    const handleNavigation = (location) => {
+        navigate(location);
+    }
 
     return (
         <div className="w-full overflow-hidden bg-gray-900 h-[450px] max-md:h-[350px]">
@@ -147,7 +153,7 @@ export default function HeroSlider() {
                                     transition={{ delay: 0.5, duration: 0.6 }}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
-                                    onClick={() => (window.location.href = slider.buttonLink)}
+                                    onClick={() => handleNavigation(slider.buttonLink)}
                                     className="border border-white hover:bg-accent-pink-dark text-white font-bold py-2 max-md:py-2 px-6 max-md:px-8 rounded-lg flex items-center gap-2 transition-all duration-300"
                                 >
                                     {slider.buttonText}

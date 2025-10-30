@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /admin-panel/
+Disallow: /a8f3k9-mgmt-portal/

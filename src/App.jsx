@@ -38,6 +38,8 @@ import AdminUsersPage from "./pages/adminDash/AdminUsersPage"
 import ScrollToTop from "./services/ScrollToTop"
 import AboutUsPage from "./pages/about/AboutUsPage"
 import ContactPage from "./pages/contact/ContactPage"
+import NotFoundPage from "./pages/NotFoundPage"
+import AdminAuthGuard from "./pages/adminDash/components/AdminAuthGuard"
 
 
 function App() {
@@ -75,18 +77,28 @@ function App() {
                 }
               />
 
-              {/* Admin Routes */}
-              <Route path="/admin-panel" element={<AdminDashboard />} />
-              <Route path="/admin-panel/products" element={<AdminProductsPage />} />
-              <Route path="/admin-panel/categories" element={<AdminCategoriesPage />} />
-              <Route path="/admin-panel/orders" element={<AdminOrdersPage />} />
-              <Route path="/admin-panel/coupons" element={<AdminCouponsPage />} />
-              <Route path="/admin-panel/design" element={<AdminBlankPage title="Design Settings" />} />
-              <Route path="/admin-panel/shipping-fees" element={<AdminShippingFeesPage />} />
-              <Route path="/admin-panel/users" element={<AdminUsersPage />} />
+              <Route
+                path="/a8f3k9-mgmt-portal/*"
+                element={
+                  <AdminAuthGuard>
+                    <Routes>
+                      <Route index element={<AdminDashboard />} />
+                      <Route path="products" element={<AdminProductsPage />} />
+                      <Route path="categories" element={<AdminCategoriesPage />} />
+                      <Route path="orders" element={<AdminOrdersPage />} />
+                      <Route path="coupons" element={<AdminCouponsPage />} />
+                      <Route path="design" element={<AdminBlankPage title="Design Settings" />} />
+                      <Route path="shipping-fees" element={<AdminShippingFeesPage />} />
+                      <Route path="users" element={<AdminUsersPage />} />
+                    </Routes>
+                  </AdminAuthGuard>
+                }
+              />
 
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/checkout/success" element={<OrderSuccessPage />} />
+
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>
           <Footer />

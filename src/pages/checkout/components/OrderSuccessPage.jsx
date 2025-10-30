@@ -53,7 +53,7 @@ export default function OrderSuccessPage() {
           </p>
           <div className="space-y-3">
             <button
-              onClick={() => navigate("/dashboard/orders")}
+              onClick={() => navigate("/dashboard?tab=orders")}
               className="w-full px-6 py-3 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700"
             >
               Check My Orders
@@ -150,7 +150,7 @@ export default function OrderSuccessPage() {
 
           <div className="space-y-3">
             <button
-              onClick={() => navigate("/dashboard/orders")}
+              onClick={() => navigate("/dashboard?tab=orders")}
               className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all"
             >
               View My Orders

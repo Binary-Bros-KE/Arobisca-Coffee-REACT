@@ -202,16 +202,16 @@ const Navbar = () => {
                               Categories
                             </p>
                             {searchResults.categories.map((category) => (
-                              <button
+                              <Link
                                 key={category._id}
-                                onClick={() => handleSearchResultClick('category', category)}
+                                  to={`/products/${category.slug}`}
                                 className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-md flex items-center gap-2"
                               >
                                 <div className="w-6 h-6 bg-green-100 rounded flex items-center justify-center">
                                   <span className="text-green-600 text-xs font-bold">C</span>
                                 </div>
                                 <span className="text-sm text-gray-700">{category.name}</span>
-                              </button>
+                              </Link>
                             ))}
                           </div>
                         )}
@@ -394,16 +394,16 @@ const Navbar = () => {
                     >
                       {/* Categories */}
                       {searchResults.categories.map((category) => (
-                        <button
+                        <Link
                           key={category._id}
-                          onClick={() => handleSearchResultClick('category', category)}
+                          to={`/products/${category.slug}`}
                           className="w-full text-left px-3 py-2 hover:bg-gray-50 border-b border-gray-100 flex items-center gap-2"
                         >
                           <div className="w-6 h-6 bg-green-100 rounded flex items-center justify-center">
                             <span className="text-green-600 text-xs font-bold">C</span>
                           </div>
                           <span className="text-sm text-gray-700">{category.name}</span>
-                        </button>
+                        </Link>
                       ))}
                       {/* Products */}
                       {searchResults.products.map((product) => (
@@ -563,9 +563,10 @@ const Navbar = () => {
                   <div className="space-y-2">
                     <p className="px-4 py-2 font-semibold text-gray-700">Categories</p>
                     {categories.map((category) => (
-                      <button
+                      <Link
                         key={category._id}
-                        onClick={() => handleCategoryClick(category.slug)}
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        to={`/products/${category.slug}`}
                         className="block w-full text-left px-4 py-2 text-gray-700 hover:text-[#6F4E37] hover:bg-gray-50 rounded transition-colors flex items-center gap-3"
                       >
                         {category.image ? (
@@ -580,7 +581,7 @@ const Navbar = () => {
                           </div>
                         )}
                         <span>{category.name}</span>
-                      </button>
+                      </Link>
                     ))}
                   </div>
 

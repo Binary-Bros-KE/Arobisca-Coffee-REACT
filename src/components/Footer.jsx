@@ -172,7 +172,7 @@ const Footer = () => {
             <div className="grid grid-cols-2 gap-2">
               <motion.a
                 href="#"
-                className="h-12 bg-[#2D5016] rounded-md flex items-center justify-center hover:bg-[#6F4E37] transition-colors"
+                className="h-12 bg-green-900 rounded-md flex items-center justify-center hover:bg-[#6F4E37] transition-colors"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
@@ -180,7 +180,7 @@ const Footer = () => {
               </motion.a>
               <motion.a
                 href="#"
-                className="h-12 bg-[#2D5016] rounded-md flex items-center justify-center hover:bg-[#6F4E37] transition-colors"
+                className="h-12 bg-green-900 rounded-md flex items-center justify-center hover:bg-[#6F4E37] transition-colors"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
@@ -188,7 +188,7 @@ const Footer = () => {
               </motion.a>
               <motion.a
                 href="#"
-                className="h-12 bg-[#2D5016] rounded-md flex items-center justify-center hover:bg-[#6F4E37] transition-colors"
+                className="h-12 bg-green-900 rounded-md flex items-center justify-center hover:bg-[#6F4E37] transition-colors"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
@@ -196,7 +196,7 @@ const Footer = () => {
               </motion.a>
               <motion.a
                 href="#"
-                className="h-12 bg-[#2D5016] rounded-md flex items-center justify-center hover:bg-[#6F4E37] transition-colors"
+                className="h-12 bg-green-900 rounded-md flex items-center justify-center hover:bg-[#6F4E37] transition-colors"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
