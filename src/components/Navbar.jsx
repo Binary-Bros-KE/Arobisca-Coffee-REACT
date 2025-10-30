@@ -130,7 +130,7 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="bg-[#6F4E37] text-white text-center py-2 text-sm relative"
+            className="bg-[#6F4E37] text-white text-center py-2 text-sm relative max-md:text-xs"
           >
             <p>
               Enjoy Free Deliveries Around Nairobi CBD.{" "}
