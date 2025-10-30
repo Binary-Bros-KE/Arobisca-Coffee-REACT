@@ -6,6 +6,7 @@ import { verifyEmailCode, requestEmailVerificationCode } from "../redux/slices/a
 import { motion } from "framer-motion"
 import { FiX } from "react-icons/fi"
 import toast from "react-hot-toast"
+import { Link } from "react-router-dom"
 
 export default function EmailVerificationModal({ isOpen, userEmail }) {
   const [code, setCode] = useState(["", "", "", ""])
@@ -48,7 +49,7 @@ export default function EmailVerificationModal({ isOpen, userEmail }) {
       toast.success("Verification code sent to your email"),
         setResendTimer(60)
     }else {
-      const errorMessage = result.payload || "Login failed";
+      const errorMessage = result.payload;
       toast.error(errorMessage);
     }
   }
@@ -70,12 +71,15 @@ export default function EmailVerificationModal({ isOpen, userEmail }) {
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-amber-900">Verify Your Email</h2>
-          <button className="text-gray-400 hover:text-gray-600">
+          <Link 
+          to={"/"}
+          className="text-gray-400 hover:text-gray-600"
+          >
             <FiX size={24} />
-          </button>
+          </Link>
         </div>
 
-        <p className="text-gray-600 mb-6">
+        <p className="text-gray-600 mb-6 text-center">
           We sent a 4-digit code to <span className="font-semibold">{userEmail}</span>
         </p>
 

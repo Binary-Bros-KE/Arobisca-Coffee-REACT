@@ -285,13 +285,13 @@ export default function AdminAuthGuard({ children }) {
               <div className="flex gap-3">
                 <button
                   onClick={handleLogout}
-                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium cursor-pointer"
                 >
                   Logout Now
                 </button>
                 <button
                   onClick={handleStayActive}
-                  className="flex-1 px-4 py-3 bg-coffee text-white rounded-lg hover:bg-coffee/90 transition font-medium"
+                  className="flex-1 px-4 py-3 bg-coffee text-white rounded-lg hover:bg-coffee/90 transition font-medium cursor-pointer"
                 >
                   Stay Active
                 </button>

@@ -204,7 +204,7 @@ const Navbar = () => {
                             {searchResults.categories.map((category) => (
                               <Link
                                 key={category._id}
-                                  to={`/products/${category.slug}`}
+                                to={`/products/${category.slug}`}
                                 className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-md flex items-center gap-2"
                               >
                                 <div className="w-6 h-6 bg-green-100 rounded flex items-center justify-center">
@@ -306,7 +306,10 @@ const Navbar = () => {
                       <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-amber-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
                         {user.username?.charAt(0).toUpperCase()}
                       </div>
-                      <span>{user.username}</span>
+                      <div className="flex flex-col text-left">
+                        <span>{user.username}</span>
+                        <span className="bg-green-600/10 border border-green-600 rounded-full px-2 w-fit py-0 text-green-600 capitalize">{user?.accountType} Account</span>
+                      </div>
                       {isEmailVerified ? (
                         <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Verified</span>
                       ) : (
@@ -611,7 +614,10 @@ const Navbar = () => {
                             {user.username?.charAt(0).toUpperCase()}
                           </div>
                           <div className="flex items-center gap-2">
-                            <span>{user.username}</span>
+                            <div className="flex flex-col text-left">
+                              <span>{user.username}</span>
+                              <span className="bg-green-600/10 border border-green-600 rounded-full px-2 w-fit py-0 text-green-600 capitalize">{user?.accountType} Account</span>
+                            </div>
                             {isEmailVerified ? (
                               <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
                                 Verified

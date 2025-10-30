@@ -7,15 +7,13 @@ import AdminSidebar from "./components/AdminSidebar"
 import toast from "react-hot-toast"
 import { Loader } from "lucide-react"
 
-const API_URL = import.meta.env.VITE_SERVER_URL
+const API_URL = `${import.meta.env.VITE_SERVER_URL}/shipping-fees`
 
 export default function AdminShippingFeesPage() {
     const [shippingFees, setShippingFees] = useState([])
     const [loading, setLoading] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [editingFee, setEditingFee] = useState(null)
-
-    const API_URL = `${API_URL}/shipping-fees`
 
     // Fetch all fees
     const fetchFees = async () => {
@@ -139,8 +137,8 @@ export default function AdminShippingFeesPage() {
                                     <h3 className="text-xl font-semibold text-gray-800">{fee.destination}</h3>
                                     <div className="flex items-center gap-2">
                                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${fee.codAvailable
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-red-100 text-red-800'
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'bg-red-100 text-red-800'
                                             }`}>
                                             {fee.codAvailable ? 'COD Available' : 'COD Not Available'}
                                         </span>
@@ -167,8 +165,8 @@ export default function AdminShippingFeesPage() {
                                     <button
                                         onClick={() => toggleCodAvailable(fee)}
                                         className={`flex-1 flex items-center justify-center gap-2 py-2 rounded transition cursor-pointer ${fee.codAvailable
-                                                ? 'bg-orange-200 text-white hover:bg-orange-700'
-                                                : 'bg-green-600 text-white hover:bg-green-700'
+                                            ? 'bg-orange-200 text-white hover:bg-orange-700'
+                                            : 'bg-green-600 text-white hover:bg-green-700'
                                             }`}
                                     >
                                         <FiDollarSign size={16} />

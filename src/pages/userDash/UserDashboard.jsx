@@ -20,7 +20,12 @@ const PersonalInfoWidget = ({ user, editMode, setEditMode, formData, setFormData
       className="bg-white rounded-2xl shadow-lg p-6"
     >
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-gray-800">Personal Information</h3>
+        <h3 className="text-xl font-bold text-gray-800">
+          {user.accountType === "business" ?
+            "Business Information" :
+            "Personal Information"
+          }
+        </h3>
         <button
           onClick={() => setEditMode(!editMode)}
           className="flex items-center gap-2 px-4 py-2 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition-all"
@@ -68,18 +73,33 @@ const PersonalInfoWidget = ({ user, editMode, setEditMode, formData, setFormData
         </form>
       ) : (
         <div className="space-y-4">
-          <div className="pb-4 border-b border-gray-200">
-            <p className="text-sm text-gray-600">Username</p>
-            <p className="text-lg font-semibold text-gray-800">{user?.username}</p>
-          </div>
+          {user.accountType === "business" && (
+            <>
+              <div className="pb-4 border-b border-gray-200">
+                <p className="text-sm text-gray-600">Company Name</p>
+                <p className="text-lg font-semibold text-gray-800">{user?.companyName}</p>
+              </div>
+              <div className="pb-4 border-b border-gray-200">
+                <p className="text-sm text-gray-600">Company Address</p>
+                <p className="text-lg font-semibold text-gray-800">{user?.address}</p>
+              </div>
+            </>
+          )}
+          {user.accountType === "personal" && (
+            <div className="pb-4 border-b border-gray-200">
+              <p className="text-sm text-gray-600">Username</p>
+              <p className="text-lg font-semibold text-gray-800">{user?.username}</p>
+            </div>
+          )}
           <div className="pb-4 border-b border-gray-200">
             <p className="text-sm text-gray-600">Email</p>
             <p className="text-lg font-semibold text-gray-800">{user?.email}</p>
           </div>
-          <div>
+          <div className="pb-4 border-b border-gray-200">
             <p className="text-sm text-gray-600">Phone Number</p>
             <p className="text-lg font-semibold text-gray-800">{user?.phoneNumber}</p>
           </div>
+
         </div>
       )}
     </motion.div>
@@ -426,7 +446,8 @@ export default function UserDashboard() {
                   <FiUser className="w-10 h-10 text-white" />
                 </div>
                 <h2 className="text-xl font-bold text-gray-800">{user?.username}</h2>
-                <p className="text-sm text-gray-600">{user?.email}</p>
+                <p className="text-sm text-gray-600 mb-2">{user?.email}</p>
+                <span className="bg-green-600/10 border border-green-600 rounded-full px-2 w-fit py-0 text-green-600 capitalize">{user?.accountType} Account</span>
                 <div className="mt-3">
                   {isEmailVerified ? (
                     <span className="inline-block px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">

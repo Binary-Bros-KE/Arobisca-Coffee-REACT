@@ -10,14 +10,14 @@ export default function AdminSidebar() {
   const location = useLocation()
 
   const menuItems = [
-    { label: "Dashboard", icon: FiHome, path: "/admin-panel" },
-    { label: "Products", icon: FiBox, path: "/admin-panel/products" },
-    { label: "Categories", icon: FiTag, path: "/admin-panel/categories" },
-    { label: "Shipping", icon: FiMapPin, path: "/admin-panel/shipping-fees" },
-    { label: "Orders", icon: FiShoppingCart, path: "/admin-panel/orders" },
-    { label: "Users", icon: FiUsers, path: "/admin-panel/users" },
-    { label: "Coupons", icon: FiGift, path: "/admin-panel/coupons" },
-    { label: "Design", icon: FiSettings, path: "/admin-panel/design" },
+    { label: "Dashboard", icon: FiHome, path: "/a8f3k9-mgmt-portal" },
+    { label: "Products", icon: FiBox, path: "/a8f3k9-mgmt-portal/products" },
+    { label: "Categories", icon: FiTag, path: "/a8f3k9-mgmt-portal/categories" },
+    { label: "Shipping", icon: FiMapPin, path: "/a8f3k9-mgmt-portal/shipping-fees" },
+    { label: "Orders", icon: FiShoppingCart, path: "/a8f3k9-mgmt-portal/orders" },
+    { label: "Users", icon: FiUsers, path: "/a8f3k9-mgmt-portal/users" },
+    { label: "Coupons", icon: FiGift, path: "/a8f3k9-mgmt-portal/coupons" },
+    { label: "Design", icon: FiSettings, path: "/a8f3k9-mgmt-portal/design" },
   ]
 
   const isActive = (path) => location.pathname === path

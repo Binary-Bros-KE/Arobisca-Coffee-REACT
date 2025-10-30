@@ -221,7 +221,7 @@ export default function AdminDashboard() {
               })}
             </div>
             <Link 
-              to="/admin-panel/orders"
+              to="/a8f3k9-mgmt-portal/orders"
               className="block mt-4 text-center text-coffee hover:text-coffee/80 font-medium"
             >
               View All Orders →

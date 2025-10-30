@@ -10,7 +10,7 @@ export const fetchAllUsers = createAsyncThunk(
     try {
       const response = await fetch(`${API_URL}/users`)
       const data = await response.json()
-      
+
       if (!response.ok) throw new Error(data.message || "Failed to fetch users")
       return data.data
     } catch (error) {
@@ -26,6 +26,7 @@ const usersSlice = createSlice({
     loading: false,
     error: null,
     filters: {
+      accountType: 'all',
       verificationStatus: 'all',
       dateRange: 'all'
     }

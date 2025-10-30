@@ -92,7 +92,7 @@ export default function AdminOrdersPage() {
       setShowStatusModal(false)
       setSelectedOrder(null)
     } catch (error) {
-    console.log(`Status eror`, error);
+      console.log(`Status eror`, error);
       toast.error(error.message || "Failed to update order status")
     } finally {
       setStatusLoading(false)
@@ -131,6 +131,12 @@ export default function AdminOrdersPage() {
       orders = orders.filter(order => order.orderStatus === currentTab)
     }
 
+    // Apply account type filter
+    console.log(`accountType`, filters.accountType);
+    if (filters.accountType !== 'all') {
+      orders = orders.filter(order => order.user?.accountType === filters.accountType)
+    }
+
     // Apply payment method filter
     if (filters.paymentMethod !== 'all') {
       orders = orders.filter(order => order.paymentMethod === filters.paymentMethod)
@@ -167,9 +173,12 @@ export default function AdminOrdersPage() {
   }
 
   const getPaymentMethodColor = (method) => {
-    return method === 'mpesa'
-      ? 'bg-green-100 text-green-800'
-      : 'bg-orange-100 text-orange-800'
+    const colors = {
+      mpesa: 'bg-green-100 text-green-800',
+      cod: 'bg-orange-100 text-orange-800',
+      credit: 'bg-blue-100 text-blue-800'
+    }
+    return colors[method] || 'bg-gray-100 text-gray-800'
   }
 
   const filteredOrders = getFilteredOrders()
@@ -255,8 +264,8 @@ export default function AdminOrdersPage() {
                     key={tab.id}
                     onClick={() => handleTabChange(tab.id)}
                     className={`flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm whitespace-nowrap cursor-pointer ${isActive
-                        ? 'border-coffee text-coffee'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-coffee text-coffee'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       }`}
                   >
                     <Icon size={18} />
@@ -281,6 +290,18 @@ export default function AdminOrdersPage() {
                 <span className="text-sm font-medium text-gray-700">Filter by:</span>
               </div>
 
+              {/* New: Account Type Filter */}
+              <select
+                value={filters.accountType}
+                onChange={(e) => handleFilterChange('accountType', e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coffee"
+              >
+                <option value="all">All Account Types</option>
+                <option value="business">Business Accounts</option>
+                <option value="personal">Personal Accounts</option>
+              </select>
+
+              {/* Enhanced Payment Method Filter */}
               <select
                 value={filters.paymentMethod}
                 onChange={(e) => handleFilterChange('paymentMethod', e.target.value)}
@@ -289,6 +310,7 @@ export default function AdminOrdersPage() {
                 <option value="all">All Payment Methods</option>
                 <option value="mpesa">M-Pesa</option>
                 <option value="cod">Cash on Delivery</option>
+                <option value="credit">Credit Purchase</option>
               </select>
 
               <select
@@ -435,10 +457,19 @@ function OrderCard({
               <p className="font-medium flex items-center gap-2">
                 <FiUser size={14} />
                 Customer
+                {order.user?.accountType === 'business' ? (
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">B 2 B</span>
+                ) : (
+                  <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full">Personal Account</span>
+                )}
               </p>
               <p>{order.user?.firstName} {order.user?.lastName}</p>
               <p>{order.user?.email}</p>
               <p>{order.user?.phoneNumber}</p>
+              {/* Business Info */}
+              {order.user?.accountType === 'business' && order.user?.companyName && (
+                <p className="text-green-600 font-medium mt-1">{order.user.companyName}</p>
+              )}
             </div>
             <div>
               <p className="font-medium">Delivery Address</p>
@@ -469,12 +500,23 @@ function OrderCard({
           {order.coupon && (
             <div className="mt-3 p-3 bg-amber-50 rounded-lg">
               <p className="text-sm text-amber-800 flex flex-col">
-                <span className="font-semibold">Coupon Used</span> 
+                <span className="font-semibold">Coupon Used</span>
                 <span>Coupon Code: {order.coupon.code}</span>
                 <span>Coupon Type: {order.coupon.discountType}</span>
                 <span>Discount Amount: {order.coupon.discountAmount}</span>
                 <span>Applied Discount Amount: {order.coupon.appliedDiscount}</span>
               </p>
+            </div>
+          )}
+
+          {/* Credit Terms Information */}
+          {order.paymentMethod === 'credit' && order.creditTerms && (
+            <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+              <p className="text-sm text-blue-800 font-medium">Credit Terms</p>
+              <div className="grid grid-cols-2 gap-2 mt-2 text-sm">
+                <span>Period: {order.creditTerms.creditDays} days</span>
+                <span>Method: {order.creditTerms.paymentMethod?.replace('_', ' ').toUpperCase()}</span>
+              </div>
             </div>
           )}
 
@@ -512,6 +554,7 @@ function OrderCard({
               Payment
             </button>
           </div>
+
         </div>
       </div>
 

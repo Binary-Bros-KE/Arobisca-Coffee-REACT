@@ -109,6 +109,7 @@ const ordersSlice = createSlice({
     filters: {
       paymentMethod: 'all',
       paymentStatus: 'all',
+       accountType: 'all',
       dateRange: 'all'
     }
   },

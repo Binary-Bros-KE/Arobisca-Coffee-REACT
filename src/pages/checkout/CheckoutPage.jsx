@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import { FiDollarSign, FiMapPin } from "react-icons/fi"
+import { FiBriefcase, FiDollarSign, FiMapPin, FiUser } from "react-icons/fi"
 import { Loader } from "lucide-react"
 import toast from "react-hot-toast"
 import MpesaPayment from "./components/MpesaPayment"
@@ -43,6 +43,19 @@ export default function CheckoutPage() {
   const [appliedCoupon, setAppliedCoupon] = useState(null)
   const [couponLoading, setCouponLoading] = useState(false)
   const [couponError, setCouponError] = useState("")
+
+  // Business Info
+  const [accountType, setAccountType] = useState("personal") // "personal" or "business"
+  const [businessInfo, setBusinessInfo] = useState({
+    companyName: "",
+    kraPin: "",
+    businessAddress: ""
+  })
+  const [creditTerms, setCreditTerms] = useState({
+    enabled: false,
+    paymentMethod: "", // "cheque", "bank_transfer", "mpesa", "cash"
+    creditDays: 0
+  })
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -182,6 +195,26 @@ export default function CheckoutPage() {
     if (!shippingAddress.city) errors.city = "City is required"
     if (useDifferentBilling && !billingAddress?.firstName) errors.billingFirstName = "Billing first name is required"
 
+    // Validate business fields for guest business users
+    if ((!isAuthenticated && accountType === "business") ||
+      (isAuthenticated && user?.accountType === 'business')) {
+      if (!businessInfo.companyName && !user?.companyName) errors.companyName = "Company name is required"
+      if (!businessInfo.kraPin && !user?.kraPin) errors.kraPin = "KRA pin is required"
+      if (!businessInfo.businessAddress && !user?.address) errors.businessAddress = "Business address is required"
+    }
+
+    // Validate credit terms if credit payment is selected
+    if (paymentMethod === "credit") {
+      if (!creditTerms.creditDays) {
+        toast.error("Please select credit period")
+        return false
+      }
+      if (!creditTerms.paymentMethod) {
+        toast.error("Please select preferred payment method")
+        return false
+      }
+    }
+
     // Add COD validation
     if (paymentMethod === "cod" && !isCodAvailableForSelectedLocation()) {
       toast.error("Cash on Delivery is not available for the selected location")
@@ -235,6 +268,15 @@ export default function CheckoutPage() {
         discount: discountAmount,
         shipping: shippingCost,
         total: finalTotal,
+
+        // Add new fields
+        accountType: isAuthenticated ? user.accountType : accountType,
+        ...((!isAuthenticated && accountType === "business") && {
+          businessInfo: businessInfo
+        }),
+        ...(paymentMethod === "credit" && {
+          creditTerms: creditTerms
+        })
       }
 
       console.log('🔄 Sending order data to server:', orderData)
@@ -293,6 +335,7 @@ export default function CheckoutPage() {
           <div className="lg:col-span-2">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Contact Information */}
+              {/* Contact Information */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -307,6 +350,48 @@ export default function CheckoutPage() {
                     <span className="text-primary text-xs font-light ">(Login to use saved info)</span>
                   }
                 </h2>
+
+                {/* Account Type Toggle - Only for guest users */}
+                {!isAuthenticated && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-3">Account Type</label>
+                    <div className="flex gap-4">
+                      <button
+                        type="button"
+                        onClick={() => setAccountType("personal")}
+                        className={`flex-1 py-3 px-4 rounded-lg border-2 transition-all ${accountType === "personal"
+                          ? "border-amber-500 bg-amber-50 text-amber-700"
+                          : "border-gray-300 bg-white text-gray-600 hover:border-amber-300"
+                          }`}
+                      >
+                        <FiUser className="inline-block mr-2" />
+                        Personal
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAccountType("business")}
+                        className={`flex-1 py-3 px-4 rounded-lg border-2 transition-all ${accountType === "business"
+                          ? "border-green-500 bg-green-50 text-green-700"
+                          : "border-gray-300 bg-white text-gray-600 hover:border-green-300"
+                          }`}
+                      >
+                        <FiBriefcase className="inline-block mr-2" />
+                        Business
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* For logged-in users, show account type info */}
+                {isAuthenticated && user && (
+                  <div className="mb-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                    <p className="text-amber-700 font-medium">
+                      {user.accountType === 'business' ? 'Business Account' : 'Personal Account'}
+                      {user.accountType === 'business' && user.companyName && ` - ${user.companyName}`}
+                    </p>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
@@ -333,6 +418,59 @@ export default function CheckoutPage() {
                     {formErrors.phone && <p className="text-red-500 text-sm mt-1">{formErrors.phone}</p>}
                   </div>
                 </div>
+
+                {/* Business Information Fields - Show for guest business or logged-in business users */}
+                {(accountType === "business" || (isAuthenticated && user?.accountType === 'business')) && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    className="mt-6 p-4 bg-green-50 rounded-lg border border-green-200 space-y-4"
+                  >
+                    <h3 className="text-lg font-semibold text-green-800 flex items-center">
+                      <FiBriefcase className="mr-2" />
+                      Business Information
+                    </h3>
+
+                    <div>
+                      <label className="block text-sm font-medium text-green-700 mb-2">Company Name</label>
+                      <input
+                        type="text"
+                        value={businessInfo.companyName || (isAuthenticated && user?.companyName) || ""}
+                        onChange={(e) => setBusinessInfo({ ...businessInfo, companyName: e.target.value })}
+                        required
+                        className="w-full px-4 py-3 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 placeholder:text-green-300 bg-white"
+                        placeholder="Your Company Ltd"
+                        disabled={isAuthenticated && user?.companyName} // Disable if already set in user profile
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-green-700 mb-2">KRA Pin</label>
+                      <input
+                        type="text"
+                        value={businessInfo.kraPin || (isAuthenticated && user?.kraPin) || ""}
+                        onChange={(e) => setBusinessInfo({ ...businessInfo, kraPin: e.target.value })}
+                        required
+                        className="w-full px-4 py-3 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 placeholder:text-green-300 bg-white"
+                        placeholder="A123456789X"
+                        disabled={isAuthenticated && user?.kraPin}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-green-700 mb-2">Business Address</label>
+                      <input
+                        type="text"
+                        value={businessInfo.businessAddress || (isAuthenticated && user?.address) || ""}
+                        onChange={(e) => setBusinessInfo({ ...businessInfo, businessAddress: e.target.value })}
+                        required
+                        className="w-full px-4 py-3 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 placeholder:text-green-300 bg-white"
+                        placeholder="Full business address"
+                        disabled={isAuthenticated && user?.address}
+                      />
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
 
 
@@ -555,6 +693,7 @@ export default function CheckoutPage() {
               </motion.div>
 
               {/* Payment Method */}
+              {/* Payment Method */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -574,16 +713,29 @@ export default function CheckoutPage() {
                       description: "Pay when you receive your order",
                       disabled: !isCodAvailableForSelectedLocation()
                     },
+                    // Add Credit option only for business accounts
+                    ...((accountType === "business" || (isAuthenticated && user?.accountType === 'business'))
+                      ? [{
+                        id: "credit",
+                        label: "Credit Purchase",
+                        description: "Pay later with credit terms (B2B Only)",
+                        disabled: false
+                      }]
+                      : [])
                   ].map((method) => (
                     <label
                       key={method.id}
                       className={`flex items-center p-4 border-2 rounded-lg transition-all ${paymentMethod === method.id
                         ? method.disabled
                           ? "border-gray-400 bg-gray-100"
-                          : "border-green-600 bg-green-50"
+                          : method.id === "credit"
+                            ? "border-blue-600 bg-blue-50"
+                            : "border-green-600 bg-green-50"
                         : method.disabled
                           ? "border-gray-200 bg-gray-50 cursor-not-allowed"
-                          : "border-gray-200 hover:border-green-300 cursor-pointer"
+                          : method.id === "credit"
+                            ? "border-gray-200 hover:border-blue-300 cursor-pointer"
+                            : "border-gray-200 hover:border-green-300 cursor-pointer"
                         }`}
                     >
                       <input
@@ -618,6 +770,68 @@ export default function CheckoutPage() {
                     </label>
                   ))}
                 </div>
+
+                {/* Credit Terms Section - Only show when credit is selected and user is business */}
+                {paymentMethod === "credit" && (accountType === "business" || (isAuthenticated && user?.accountType === 'business')) && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200 space-y-4"
+                  >
+                    <h3 className="text-lg font-semibold text-blue-800">Credit Terms</h3>
+
+                    {/* Credit Days Selection */}
+                    <div>
+                      <label className="block text-sm font-medium text-blue-700 mb-2">Credit Period</label>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        {[5, 10, 20, 30].map((days) => (
+                          <button
+                            type="button"
+                            key={days}
+                            onClick={() => setCreditTerms({ ...creditTerms, creditDays: days })}
+                            className={`py-2 px-3 rounded-lg border-2 transition-all ${creditTerms.creditDays === days
+                              ? "border-blue-600 bg-blue-100 text-blue-700"
+                              : "border-gray-300 bg-white text-gray-600 hover:border-blue-300"
+                              }`}
+                          >
+                            {days} Days
+                          </button>
+                        ))}
+                      </div>
+                      {!creditTerms.creditDays && (
+                        <p className="text-red-500 text-sm mt-1">Please select a credit period</p>
+                      )}
+                    </div>
+
+                    {/* Payment Method Selection for Credit */}
+                    <div>
+                      <label className="block text-sm font-medium text-blue-700 mb-2">Preferred Payment Method</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          { id: "cheque", label: "Cheque" },
+                          { id: "bank_transfer", label: "Bank Transfer" },
+                          { id: "mpesa", label: "M-Pesa" },
+                          { id: "cash", label: "Cash" }
+                        ].map((method) => (
+                          <button
+                            type="button"
+                            key={method.id}
+                            onClick={() => setCreditTerms({ ...creditTerms, paymentMethod: method.id })}
+                            className={`py-2 px-3 rounded-lg border-2 transition-all ${creditTerms.paymentMethod === method.id
+                              ? "border-blue-600 bg-blue-100 text-blue-700"
+                              : "border-gray-300 bg-white text-gray-600 hover:border-blue-300"
+                              }`}
+                          >
+                            {method.label}
+                          </button>
+                        ))}
+                      </div>
+                      {!creditTerms.paymentMethod && (
+                        <p className="text-red-500 text-sm mt-1">Please select a payment method</p>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
 
               {/* Billing Address */}
@@ -845,6 +1059,18 @@ export default function CheckoutPage() {
                   <span>Total</span>
                   <span>KES {finalTotal.toLocaleString()}</span>
                 </div>
+
+                {/* Add this in the Order Summary section, after the price breakdown */}
+                {paymentMethod === "credit" && (
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-blue-700 font-medium text-sm">
+                      Credit Purchase - {creditTerms.creditDays} Days
+                    </p>
+                    <p className="text-blue-600 text-xs">
+                      Payment Method: {creditTerms.paymentMethod?.replace('_', ' ').toUpperCase()}
+                    </p>
+                  </div>
+                )}
               </div>
             </motion.div>
           </div>

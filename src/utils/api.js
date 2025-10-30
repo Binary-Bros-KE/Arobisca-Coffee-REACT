@@ -144,12 +144,21 @@ export const apiService = {
     }
   },
 
-  register: async (username, email, phoneNumber, password) => {
+  register: async (username, email, phoneNumber, password, accountType, companyName, address, kraPin) => {
     try {
       const response = await fetch(`${API_BASE_URL}/users/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, phoneNumber, password }),
+        body: JSON.stringify({
+          username,
+          email,
+          phoneNumber,
+          password,
+          accountType,
+          companyName,
+          address,
+          kraPin
+        }),
       })
       return await response.json()
     } catch (error) {

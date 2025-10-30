@@ -17,9 +17,9 @@ export const loginUser = createAsyncThunk("auth/loginUser", async ({ email, pass
 
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
-  async ({ username, email, phoneNumber, password }, { rejectWithValue }) => {
+  async ({ username, email, phoneNumber, password, accountType, companyName, address, kraPin }, { rejectWithValue }) => {
     try {
-      const response = await apiService.register(username, email, phoneNumber, password)
+      const response = await apiService.register(username, email, phoneNumber, password, accountType, companyName, address, kraPin)
       if (response.success) {
         return response.data
       }

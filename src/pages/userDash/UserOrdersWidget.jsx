@@ -3,10 +3,10 @@ import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchUserOrders } from "../../redux/slices/ordersSlice"
 import { motion } from "framer-motion"
-import { 
-  FiPackage, 
-  FiTruck, 
-  FiCheckCircle, 
+import {
+  FiPackage,
+  FiTruck,
+  FiCheckCircle,
   FiClock,
   FiXCircle,
   FiInfo
@@ -104,7 +104,7 @@ const UserOrdersWidget = ({ user }) => {
         <div className="space-y-6">
           {userOrders.map((order) => {
             const StatusIcon = getStatusIcon(order.orderStatus)
-            
+
             return (
               <motion.div
                 key={order._id}
@@ -131,13 +131,13 @@ const UserOrdersWidget = ({ user }) => {
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-wrap gap-2">
-                    <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${getStatusColor(order.orderStatus)}`}>
-                      {order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}
+                    <span className={`px-3 py-1 rounded-full text-sm font-semibold border capitalize ${getStatusColor(order.orderStatus)}`}>
+                      Order Status: {order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}
                     </span>
-                    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getPaymentStatusColor(order.paymentStatus)}`}>
-                      Payment: {order.paymentStatus}
+                    <span className={`px-3 py-1 rounded-full text-sm font-semibold capitalize ${getPaymentStatusColor(order.paymentStatus)}`}>
+                      Payment Status: {order.paymentStatus}
                     </span>
                   </div>
                 </div>
@@ -182,7 +182,7 @@ const UserOrdersWidget = ({ user }) => {
                       <span>Total:</span>
                       <span className="text-amber-600">KES {order.total.toLocaleString()}</span>
                     </div>
-                    
+
                     <div className="pt-2">
                       <p className="text-sm text-gray-600">
                         <span className="font-medium">Delivery:</span> {order.shippingMethod}
@@ -190,6 +190,22 @@ const UserOrdersWidget = ({ user }) => {
                       <p className="text-sm text-gray-600">
                         <span className="font-medium">Est. Delivery:</span> {order.deliveryTime}
                       </p>
+                    </div>
+                    <div className="pt-2">
+                      <h1 className="font-semibold text-green-900">Payment Terms</h1>
+                      <p className="text-sm text-gray-600 capitalize">
+                        <span className="font-medium">Payment Method:</span> {order.paymentMethod}
+                      </p>
+                      {order?.creditTerms && (
+                        <>
+                          <p className="text-sm text-gray-600 capitalize">
+                            <span className="font-medium">Credit Period:</span> {order.creditTerms.creditDays} Days
+                          </p>
+                          <p className="text-sm text-gray-600 capitalize">
+                            <span className="font-medium">Payment Method:</span> {order.creditTerms.paymentMethod}
+                          </p>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -220,7 +236,7 @@ const UserOrdersWidget = ({ user }) => {
                 <div className="mt-4 pt-4 border-t border-gray-200">
                   <p className="text-sm font-medium text-gray-700 mb-1">Delivery Address:</p>
                   <p className="text-sm text-gray-600">
-                    {order.shippingAddress.firstName} {order.shippingAddress.lastName} • 
+                    {order.shippingAddress.firstName} {order.shippingAddress.lastName} •
                     {order.shippingAddress.address}, {order.shippingAddress.city}
                   </p>
                 </div>
