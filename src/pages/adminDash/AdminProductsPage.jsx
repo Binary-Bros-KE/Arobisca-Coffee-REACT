@@ -99,7 +99,7 @@ export default function AdminProductsPage() {
                 {products.map((product) => (
                   <tr key={product._id} className="hover:bg-gray-100">
                     <td className="px-6 py-4 text-sm text-gray-900 flex items-center gap-2">
-                      <img src={product?.images[0].url} alt="" className="h-10 w-13 rounded-md" />
+                      <img src={product?.images[0]?.url} alt="" className="h-10 w-13 rounded-md" />
                       {product.name}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">{product.proCategoryId?.name || "N/A"}</td>
