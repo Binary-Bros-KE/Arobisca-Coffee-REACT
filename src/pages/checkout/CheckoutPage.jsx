@@ -62,6 +62,7 @@ export default function CheckoutPage() {
   const { user, isAuthenticated } = useSelector((state) => state.auth)
   const { items: cartItems, totalPrice } = useSelector((state) => state.cart)
 
+
   // Add this near your other state declarations
   const [selectedShippingMethod, setSelectedShippingMethod] = useState(null)
 
@@ -127,9 +128,30 @@ export default function CheckoutPage() {
     }
   }
 
+  const calculateVAT = () => {
+    return cartItems.reduce((total, item) => {
+      const itemPrice = item.offerPrice || item.price || 0;
+      const itemVAT = item.vat || 0; // Assuming product.vat is a percentage (e.g., 16)
+      const vatAmount = (itemPrice * item.quantity * itemVAT) / 100;
+      return total + vatAmount;
+    }, 0);
+  };
+
+  const calculateSubtotalBeforeVAT = () => {
+    return cartItems.reduce((total, item) => {
+      const itemPrice = item.offerPrice || item.price || 0;
+      return total + (itemPrice * item.quantity);
+    }, 0);
+  };
+
+  const vatTotal = calculateVAT();
+  const subtotalBeforeVAT = calculateSubtotalBeforeVAT(); // or use totalPrice if it already excludes VAT
+
+  // With these:
   const discountAmount = calculateDiscount()
   const totalAfterDiscount = Math.max(0, totalPrice - discountAmount)
-  const finalTotal = totalAfterDiscount + shippingCost
+  const totalAfterVAT = totalAfterDiscount + vatTotal
+  const finalTotal = totalAfterVAT + shippingCost
 
   // Check if coupon meets minimum purchase requirement
   const meetsMinimumPurchase = appliedCoupon ?
@@ -265,6 +287,7 @@ export default function CheckoutPage() {
           appliedDiscount: discountAmount
         } : null,
         subtotal: totalPrice,
+        vatTotal, // Add VAT total
         discount: discountAmount,
         shipping: shippingCost,
         total: finalTotal,
@@ -1012,24 +1035,40 @@ export default function CheckoutPage() {
 
               {/* Cart Items */}
               <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
-                {cartItems.map((item) => (
-                  <div key={item._id} className="flex gap-4 pb-4 border-b border-gray-200">
-                    <div>
-                      <img
-                        src={item.images?.[0]?.url}
-                        alt={item.name}
-                        className="w-20 h-20 object-cover rounded-lg"
-                      />
+                {/* Inside the cart items display in Order Summary */}
+                {cartItems.map((item) => {
+                  const itemPrice = item.offerPrice || item.price || 0;
+                  const itemTotal = itemPrice * item.quantity;
+                  const itemVAT = item.vat || 0;
+                  const itemVATAmount = (itemTotal * itemVAT) / 100;
+
+                  return (
+                    <div key={item._id} className="flex gap-4 pb-4 border-b border-gray-200">
+                      <div>
+                        <img
+                          src={item.images?.[0]?.url}
+                          alt={item.name}
+                          className="w-20 h-20 object-cover rounded-lg"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-800 line-clamp-2">{item.name}</p>
+                        <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
+                        {itemVAT > 0 && (
+                          <p className="text-xs text-gray-500">VAT: {itemVAT}%</p>
+                        )}
+                        <p className="font-bold text-amber-600">
+                          KES {itemTotal.toLocaleString()}
+                          {itemVATAmount > 0 && (
+                            <span className="text-xs text-gray-500 ml-2">
+                              (incl. VAT: KES {itemVATAmount.toFixed(2)})
+                            </span>
+                          )}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-800 line-clamp-2">{item.name}</p>
-                      <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
-                      <p className="font-bold text-amber-600">
-                        KES {((item.offerPrice || item.price) * item.quantity).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
 
               {/* Price Breakdown */}
@@ -1047,30 +1086,20 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
+                {/* Add VAT Line */}
+                <div className="flex justify-between text-gray-700">
+                  <span>VAT ({cartItems.map(item => item.vat || 0).filter((v, i, a) => a.indexOf(v) === i).join('/')}%)</span>
+                  <span>KES {vatTotal.toLocaleString()}</span>
+                </div>
+
                 <div className="flex justify-between text-gray-700">
                   <span>Shipping</span>
                   <span>KES {shippingCost.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-gray-700">
-                  <span>Tax</span>
-                  <span>KES 0</span>
                 </div>
                 <div className="flex justify-between text-xl font-bold text-amber-600 border-t border-gray-200 pt-3">
                   <span>Total</span>
                   <span>KES {finalTotal.toLocaleString()}</span>
                 </div>
-
-                {/* Add this in the Order Summary section, after the price breakdown */}
-                {paymentMethod === "credit" && (
-                  <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="text-blue-700 font-medium text-sm">
-                      Credit Purchase - {creditTerms.creditDays} Days
-                    </p>
-                    <p className="text-blue-600 text-xs">
-                      Payment Method: {creditTerms.paymentMethod?.replace('_', ' ').toUpperCase()}
-                    </p>
-                  </div>
-                )}
               </div>
             </motion.div>
           </div>
@@ -1082,7 +1111,7 @@ export default function CheckoutPage() {
         {showMpesaPopup && (
           <MpesaPayment
             onClose={() => setShowMpesaPopup(false)}
-            total={totalWithShipping}
+            total={finalTotal} // Changed from totalWithShipping to finalTotal
             setTransactionData={setTransactionData}
             setPaymentStatus={setPaymentStatus}
             handleOrderSubmit={handleOrderSubmit}
