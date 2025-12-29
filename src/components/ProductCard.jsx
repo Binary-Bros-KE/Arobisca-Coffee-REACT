@@ -84,7 +84,7 @@ export default function ProductCard({ product }) {
 
         {/* Product Name */}
         <Link to={`/product/${product._id}`}>
-          <h3 className="text-sm md:text-lg font-semibold text-gray-800 line-clamp-2 hover:text-green-600 transition-colors">
+          <h3 className="text-sm md:text-lg font-semibold text-gray-800 line-clamp-3 hover:text-green-600 transition-colors">
             {product.name}
           </h3>
         </Link>
