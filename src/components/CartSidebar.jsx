@@ -31,6 +31,10 @@ export default function CartSidebar() {
     dispatch(updateCartQuantity({ _id: productId, quantity }))
   }
 
+    const hasBusinessSupplyProducts = () => {
+    return cartItems.some(item => item.proCategoryId?._id === "690af3de95c9811f74993d69")
+  }
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -53,7 +57,8 @@ export default function CartSidebar() {
             className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-300">
+            <div className=" p-6 border-b border-gray-300">
+              <div className="flex items-center justify-between mb-1">
               <h2 className="text-2xl font-bold text-gray-900">Your Cart</h2>
               <motion.button
                 whileHover={{ scale: 1.1 }}
@@ -63,7 +68,13 @@ export default function CartSidebar() {
               >
                 <IoClose size={24} />
               </motion.button>
+              </div>
+
+              {hasBusinessSupplyProducts() && <p className="text-sm text-blue-600 bg-blue-600/20 border-2 border-blue-600 p-2 rounded-lg"><span className="font-bold">Note:</span>  Some items in your cart are B2B and require a business account for checkout</p>}
+
             </div>
+
+            
 
             {/* Items */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
@@ -79,69 +90,81 @@ export default function CartSidebar() {
                   </Link>
                 </div>
               ) : (
-                cartItems.map((item) => (
-                  <motion.div
-                    key={item._id}
-                    layout
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="flex gap-4 p-4 bg-gray-50 rounded-lg"
-                  >
-                    {/* Product Image */}
-                    <Link to={`/product/${item._id}`} onClick={handleClose} className="flex-shrink-0">
-                      <img
-                        src={item.images?.[0]?.url}
-                        alt={item.name}
-                        className="w-20 h-20 object-cover rounded-lg"
-                      />
-                    </Link>
+                cartItems.map((item) => {
+                  const isBusinessSupply = item.proCategoryId?._id === "690af3de95c9811f74993d69"
 
-                    {/* Product Info */}
-                    <div className="flex-1 min-w-0">
-                      <Link to={`/product/${item._id}`} onClick={handleClose}>
-                        <h3 className="font-semibold text-gray-900 line-clamp-2 hover:text-amber-600 transition-colors">
-                          {item.name}
-                        </h3>
-                      </Link>
-                      <p className="text-sm text-gray-600 mt-1">
-                        {item.offerPrice || item.price} x {item.quantity}
-                      </p>
-                      <p className="text-lg font-bold text-gray-900 mt-2">
-                        {((item.offerPrice || item.price) * item.quantity).toFixed(2)}
-                      </p>
-
-                      {/* Quantity Controls */}
-                      <div className="flex items-center gap-2 mt-3">
-                        <motion.button
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
-                          className="p-1 hover:bg-gray-200 rounded transition-colors cursor-pointer"
-                        >
-                          <BiMinus size={14} />
-                        </motion.button>
-                        <span className="px-2 font-semibold">{item.quantity}</span>
-                        <motion.button
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
-                          className="p-1 hover:bg-gray-200 rounded transition-colors cursor-pointer"
-                        >
-                          <BiPlus size={14} />
-                        </motion.button>
-                      </div>
-                    </div>
-
-                    {/* Remove Button */}
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleRemove(item._id)}
-                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                  return (
+                    <motion.div
+                      key={item._id}
+                      layout
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className="flex gap-4 p-4 bg-gray-50 rounded-lg"
                     >
-                      <BiTrash size={18} />
-                    </motion.button>
-                  </motion.div>
-                ))
+                      {/* Product Image */}
+                      <Link to={`/product/${item._id}`} onClick={handleClose} className="flex-shrink-0 relative">
+                        <img
+                          src={item.images?.[0]?.url}
+                          alt={item.name}
+                          className="w-20 h-20 object-cover rounded-lg relative"
+                        />
+                        {isBusinessSupply && (
+                          <div className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full font-bold">
+                            B2B
+                          </div>
+                        )}
+                      </Link>
+
+                      {/* Product Info */}
+                      <div className="flex-1 min-w-0">
+                        <Link to={`/product/${item._id}`} onClick={handleClose}>
+                          <h3 className="font-semibold text-gray-900 line-clamp-2 hover:text-amber-600 transition-colors">
+                            {item.name}
+                          </h3>
+                        </Link>
+                        {isBusinessSupply && (
+                          <p className="text-xs text-blue-600 font-medium">Business Supply (Business A/C Only)</p>
+                        )}
+                        <p className="text-sm text-gray-600 mt-1">
+                          {item.offerPrice || item.price} x {item.quantity}
+                        </p>
+                        <p className="text-lg font-bold text-gray-900 mt-2">
+                          {((item.offerPrice || item.price) * item.quantity).toFixed(2)}
+                        </p>
+
+                        {/* Quantity Controls */}
+                        <div className="flex items-center gap-2 mt-3">
+                          <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                            className="p-1 hover:bg-gray-200 rounded transition-colors cursor-pointer"
+                          >
+                            <BiMinus size={14} />
+                          </motion.button>
+                          <span className="px-2 font-semibold">{item.quantity}</span>
+                          <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                            className="p-1 hover:bg-gray-200 rounded transition-colors cursor-pointer"
+                          >
+                            <BiPlus size={14} />
+                          </motion.button>
+                        </div>
+                      </div>
+
+                      {/* Remove Button */}
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleRemove(item._id)}
+                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                      >
+                        <BiTrash size={18} />
+                      </motion.button>
+                    </motion.div>
+                  )
+                })
               )}
             </div>
 

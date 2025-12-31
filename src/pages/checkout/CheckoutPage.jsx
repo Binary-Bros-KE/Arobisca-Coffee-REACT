@@ -12,6 +12,7 @@ import { MdOutlinePermContactCalendar } from "react-icons/md"
 import { LiaShippingFastSolid } from "react-icons/lia"
 import { GoCreditCard } from "react-icons/go"
 import { FaRegNoteSticky } from "react-icons/fa6"
+import { logout } from "../../redux/slices/authSlice"
 
 const API_URL = import.meta.env.VITE_SERVER_URL
 
@@ -62,6 +63,17 @@ export default function CheckoutPage() {
   const { user, isAuthenticated } = useSelector((state) => state.auth)
   const { items: cartItems, totalPrice } = useSelector((state) => state.cart)
 
+  // Check if cart contains Business Supply products
+  const hasBusinessSupplyProducts = () => {
+    return cartItems.some(item => item.proCategoryId?._id === "690af3de95c9811f74993d69")
+  }
+
+  // Check if user can checkout with current account type
+  const canCheckout = () => {
+    const isPersonalAccount = isAuthenticated ? user?.accountType === 'personal' : accountType === 'personal'
+    return !(hasBusinessSupplyProducts() && isPersonalAccount)
+  }
+
 
   // Add this near your other state declarations
   const [selectedShippingMethod, setSelectedShippingMethod] = useState(null)
@@ -108,7 +120,6 @@ export default function CheckoutPage() {
     try {
       const response = await fetch(`${API_URL}/shipping-fees`) // ✅ match your backend route
       const data = await response.json()
-      console.log(`Shipping`, data);
       if (data.success) {
         setShippingMethods(data.data)
       }
@@ -143,6 +154,12 @@ export default function CheckoutPage() {
       return total + (itemPrice * item.quantity);
     }, 0);
   };
+
+
+  const handleLogout = () => {
+    dispatch(logout())
+    toast.success("You have been successfully logged out")
+  }
 
   const vatTotal = calculateVAT();
   const subtotalBeforeVAT = calculateSubtotalBeforeVAT(); // or use totalPrice if it already excludes VAT
@@ -356,8 +373,81 @@ export default function CheckoutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Checkout Form */}
           <div className="lg:col-span-2">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Contact Information */}
+            <form onSubmit={(e) => {
+              e.preventDefault()
+
+              // Check if personal account trying to checkout business products
+              if (!canCheckout()) {
+                toast.error("Business Supply products require a Business Account")
+                return
+              }
+
+              handleSubmit(e)
+            }} className="space-y-6">
+
+              {/* Business Supply Alert */}
+              {hasBusinessSupplyProducts() && (
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`rounded-2xl shadow-lg p-6 border-2 ${canCheckout()
+                    ? 'bg-blue-50 border-blue-300'
+                    : 'bg-amber-50 border-amber-400'
+                    }`}
+                >
+                  <div className="flex items-start gap-4">
+                    <FiBriefcase className={`w-8 h-8 flex-shrink-0 ${canCheckout() ? 'text-blue-600' : 'text-amber-600'
+                      }`} />
+                    <div className="flex-1">
+                      {canCheckout() ? (
+                        <>
+                          <h3 className="text-lg font-bold text-blue-800 mb-2">
+                            Business Supply Order
+                          </h3>
+                          <p className="text-blue-700">
+                            Your cart contains Business Supply products. You're checking out with a Business Account. ✓
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <h3 className="text-lg font-bold text-amber-800 mb-2">
+                            ⚠️ Business Account Required
+                          </h3>
+                          <p className="text-amber-700 mb-3">
+                            Your cart contains Business Supply products that can only be purchased with a Business Account.
+                          </p>
+                          {!isAuthenticated ? (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setAccountType("business")
+                                toast.success("Switched to Business Account")
+                                window.scrollTo({ top: 0, behavior: 'smooth' })
+                              }}
+                              className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition font-medium"
+                            >
+                              Switch to Business Account
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleLogout()
+                                setAccountType("business")
+                              }}
+                              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium flex items-center gap-2 cursor-pointer"
+                            >
+                              <FiUser className="w-4 h-4" />
+                              Logout & Register Business Account
+                            </button>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               {/* Contact Information */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -947,10 +1037,18 @@ export default function CheckoutPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
                 type="submit"
-                disabled={isSubmitting || (appliedCoupon && !meetsMinimumPurchase)}
-                className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white py-4 rounded-lg font-bold text-lg hover:shadow-lg transition-all disabled:opacity-50 cursor-pointer"
+                disabled={isSubmitting || (appliedCoupon && !meetsMinimumPurchase) || !canCheckout()}
+                className={`w-full py-4 rounded-lg font-bold text-lg transition-all ${!canCheckout()
+                  ? 'bg-gray-400 cursor-not-allowed text-gray-600'
+                  : 'bg-gradient-to-r from-amber-600 to-amber-700 text-white hover:shadow-lg cursor-pointer'
+                  } disabled:opacity-50`}
               >
-                {isSubmitting ? (
+                {!canCheckout() ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <FiBriefcase className="w-5 h-5" />
+                    Business Account Required for Checkout
+                  </span>
+                ) : isSubmitting ? (
                   <span className="flex items-center justify-center gap-2">
                     <Loader className="w-5 h-5 animate-spin" />
                     Processing...
@@ -1037,6 +1135,7 @@ export default function CheckoutPage() {
               <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
                 {/* Inside the cart items display in Order Summary */}
                 {cartItems.map((item) => {
+                  const isBusinessSupply = item.proCategoryId?._id === "690af3de95c9811f74993d69"
                   const itemPrice = item.offerPrice || item.price || 0;
                   const itemTotal = itemPrice * item.quantity;
                   const itemVAT = item.vat || 0;
@@ -1044,15 +1143,23 @@ export default function CheckoutPage() {
 
                   return (
                     <div key={item._id} className="flex gap-4 pb-4 border-b border-gray-200">
-                      <div>
+                      <div className="relative">
                         <img
                           src={item.images?.[0]?.url}
                           alt={item.name}
                           className="w-20 h-20 object-cover rounded-lg"
                         />
+                        {isBusinessSupply && (
+                          <div className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full font-bold">
+                            B2B
+                          </div>
+                        )}
                       </div>
                       <div className="flex-1">
                         <p className="font-medium text-gray-800 line-clamp-2">{item.name}</p>
+                        {isBusinessSupply && (
+                          <p className="text-xs text-blue-600 font-medium">Business Supply</p>
+                        )}
                         <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
                         {itemVAT > 0 && (
                           <p className="text-xs text-gray-500">VAT: {itemVAT}%</p>
