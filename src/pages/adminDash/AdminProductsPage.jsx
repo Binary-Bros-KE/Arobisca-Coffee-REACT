@@ -103,8 +103,8 @@ export default function AdminProductsPage() {
                       {product.name}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">{product.proCategoryId?.name || "N/A"}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">${product.price}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">${product.offerPrice || "N/A"}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">Kes {product.price?.toLocaleString()}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">Kes {product.offerPrice?.toLocaleString() || "N/A"}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{product.quantity}</td>
                     <td className="text-sm space-x-2">
                       <button

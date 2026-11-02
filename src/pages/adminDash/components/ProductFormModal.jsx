@@ -16,6 +16,7 @@ export default function ProductFormModal({ product, categories, onClose, onSave 
     quantity: "",
     price: "",
     offerPrice: "",
+    vat: "",
     proCategoryId: "",
   })
   const [images, setImages] = useState({})
@@ -30,6 +31,7 @@ export default function ProductFormModal({ product, categories, onClose, onSave 
         quantity: product.quantity,
         price: product.price,
         offerPrice: product.offerPrice || "",
+        vat: product.vat || "",
         proCategoryId: product.proCategoryId?._id || "",
       })
       
@@ -109,6 +111,7 @@ export default function ProductFormModal({ product, categories, onClose, onSave 
       formDataToSend.append("quantity", formData.quantity)
       formDataToSend.append("price", formData.price)
       formDataToSend.append("offerPrice", formData.offerPrice)
+      formDataToSend.append("vat", formData.vat)
       formDataToSend.append("proCategoryId", formData.proCategoryId)
 
       // Add images
@@ -228,7 +231,6 @@ export default function ProductFormModal({ product, categories, onClose, onSave 
                 value={formData.price}
                 onChange={handleInputChange}
                 required
-                step="0.01"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee focus:border-transparent"
                 placeholder="0.00"
               />
@@ -240,7 +242,17 @@ export default function ProductFormModal({ product, categories, onClose, onSave 
                 name="offerPrice"
                 value={formData.offerPrice}
                 onChange={handleInputChange}
-                step="0.01"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee focus:border-transparent"
+                placeholder="0.00"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">VAT</label>
+              <input
+                type="number"
+                name="vat"
+                value={formData.vat}
+                onChange={handleInputChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee focus:border-transparent"
                 placeholder="0.00"
               />

@@ -105,7 +105,7 @@ export default function ProductsGrid() {
       </section>
 
       {/* Promotional Banner */}
-      <section className="relative py-12 px-4 md:px-8 bg-[url('/coffee-products-mobile.jpg')] bg-center bg-cover">
+      <section className="relative py-12 px-4 md:px-8 bg-[url('https://res.cloudinary.com/dxybhmfpe/image/upload/v1766754007/37_c4fadm.jpg')] bg-center bg-cover">
         <div className="absolute inset-0 bg-black/70"></div>
         <div className="max-w-7xl mx-auto relative z-10">
           <motion.div

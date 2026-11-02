@@ -482,6 +482,7 @@ function OrderCard({
               <p className="font-medium">Order Details</p>
               <p>{order.items.length} items</p>
               <p>Subtotal: KES {order.subtotal.toLocaleString()}</p>
+              <p>VAT: KES {order?.vatTotal?.toLocaleString()}</p>
               <p>Discount: KES {order.discount.toLocaleString()}</p>
               <p>Shipping: KES {order.shipping.toLocaleString()}</p>
               <p className="font-semibold text-gray-900">Total: KES {order.total.toLocaleString()}</p>
