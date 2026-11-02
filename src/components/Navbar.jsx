@@ -37,6 +37,7 @@ const Navbar = () => {
   const navLinks = [
     { label: "Home", href: "/" },
     { label: "Products", href: "/products" },
+    { label: "Espresso Deck", href: "/#espresso-deck" },
     { label: "About", href: "/about" },
     { label: "New Arrivals", href: "/#new-arrivals" },
     { label: "Best Sellers", href: "/#best-sellers" },
